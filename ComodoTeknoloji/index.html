@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/src/assets/images/ComodoTeknoloji.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comodo Teknoloji</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .whatsapp-float {
+      position: fixed;
+      bottom: 15px;
+      right: 90px;
+      z-index: 100;
+    }
+
+    .whatsapp-float img {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s;
+    }
+
+    .whatsapp-float img:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+  <a href="https://wa.me/905059982093?text=Merhaba,%20Comodo%20Teknoloji%20hizmetleriniz%20hakkında%20bilgi%20almak%20istiyorum."
+    class="whatsapp-float" target="_blank" rel="noopener noreferrer" title="Comodo Teknoloji  - WhatsApp İletişim">
+    <img src="/src/assets/images/whatsapp.png" alt="Comodo Teknoloji iletisim" loading="lazy" />
+  </a>
+</body>
+
+</html>
