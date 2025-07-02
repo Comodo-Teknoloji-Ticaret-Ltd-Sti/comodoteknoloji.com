@@ -696,7 +696,7 @@ const ComodoWebsite = () => {
                                     </div>
                                     <div>
                                         <div className="font-medium text-gray-900">Telefon</div>
-                                        <div className="text-gray-600">+90 532 123 45 67</div>
+                                        <div className="text-gray-600">+90 505 998 20 93</div>
                                     </div>
                                 </div>
 
@@ -706,7 +706,7 @@ const ComodoWebsite = () => {
                                     </div>
                                     <div>
                                         <div className="font-medium text-gray-900">E-posta</div>
-                                        <div className="text-gray-600">info@comodo.com.tr</div>
+                                        <div className="text-gray-600">comodo.ltd.sti@gmail.com</div>
                                     </div>
                                 </div>
 
@@ -716,7 +716,7 @@ const ComodoWebsite = () => {
                                     </div>
                                     <div>
                                         <div className="font-medium text-gray-900">Adres</div>
-                                        <div className="text-gray-600">Ankara, Türkiye</div>
+                                        <div className="text-gray-600">Antalya, Türkiye</div>
                                     </div>
                                 </div>
                             </div>
@@ -990,7 +990,7 @@ const ComodoWebsite = () => {
                     </div>
 
                     <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-                        <p>&copy; 2024 Comodo Teknoloji. Tüm hakları saklıdır.</p>
+                        <p>&copy; 2025 Comodo Teknoloji. Tüm hakları saklıdır.</p>
                     </div>
                 </div>
             </footer>
