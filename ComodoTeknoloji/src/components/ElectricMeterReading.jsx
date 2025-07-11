@@ -856,7 +856,7 @@ const Electric = () => {
             {/* AI Assistant Chat */}
             {
                 isChatOpen && (
-                    <div className={`fixed bottom-4 right-4 z-[200] transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'
+                    <div className={`fixed bottom-4 right-20 z-[200] transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'
                         } bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden`}>
                         <div className="h-full flex flex-col">
                             {/* Chat Header */}
@@ -953,7 +953,7 @@ const Electric = () => {
                 !isChatOpen && (
                     <button
                         onClick={() => setIsChatOpen(true)}
-                        className="fixed bottom-4 right-4 z-[200] w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center"
+                        className="fixed bottom-4 right-20 z-[200] w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center"
                     >
                         <Bot className="w-6 h-6" />
                     </button>

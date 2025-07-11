@@ -6,182 +6,112 @@ const WebSites = () => {
     const [selectedCategory, setSelectedCategory] = useState('all');
     
     const categories = [
-        { id: 'all', name: 'Tümü', count: 12 },
-        { id: 'corporate', name: 'Kurumsal', count: 4 },
-        { id: 'ecommerce', name: 'E-ticaret', count: 3 },
-        { id: 'restaurant', name: 'Restoran', count: 2 },
-        { id: 'healthcare', name: 'Sağlık', count: 2 },
-        { id: 'education', name: 'Eğitim', count: 1 }
+        { id: 'all', name: 'Tümü', count: 7 },
+        { id: 'kurumsal', name: 'Kurumsal', count: 2 },
+        { id: 'saglik', name: 'Sağlık', count: 2 },
+        { id: 'eglence', name: 'Eğlence', count: 1 },
+        { id: 'comodo', name: 'Comodo', count: 1 },
+        { id: 'eticaret', name: 'E-ticaret', count: 1 }
     ];
 
     const websites = [
         {
             id: 1,
-            title: 'TechCorp Digital Solutions',
-            category: 'corporate',
-            description: 'Kurumsal kimlik ve dijital çözümler sunan teknoloji firması için modern web sitesi',
-            image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['React', 'Node.js', 'MongoDB'],
-            features: ['Responsive Tasarım', 'SEO Optimized', 'Admin Panel', 'Çoklu Dil'],
-            launchDate: '2024-12-15',
-            views: '15.2K',
+            title: 'Hukuk Bürosu',
+            category: 'kurumsal',
+            description: 'Hukuk bürosu için modern ve profesyonel web sitesi tasarımı',
+            image: '/websites/attorney.png',
+            technologies: ['React', 'JavaScript', 'CSS3'],
+            features: ['Responsive Tasarım', 'Hukuk Alanları', 'İletişim Formu', 'Avukat Profilleri'],
+            launchDate: '2025-06-20',
+            views: '8.5K',
             rating: 4.9,
-            liveUrl: 'https://techcorp-demo.com',
+            liveUrl: 'https://comodo-teknoloji-ticaret-ltd-sti.github.io/attorney/',
             color: 'from-blue-500 to-purple-600'
         },
         {
             id: 2,
-            title: 'Fashion Store Premium',
-            category: 'ecommerce',
-            description: 'Lüks moda markası için e-ticaret platformu ve marka kimlik tasarımı',
-            image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['Next.js', 'Stripe', 'PostgreSQL'],
-            features: ['E-ticaret', 'Ödeme Sistemi', 'Stok Takibi', 'Mobil Uygulama'],
-            launchDate: '2024-11-20',
-            views: '23.8K',
+            title: 'Diş Kliniği',
+            category: 'saglik',
+            description: 'Diş kliniği için modern ve güvenilir web sitesi tasarımı',
+            image: '/websites/dental.png',
+            technologies: ['React', 'JavaScript', 'Bootstrap'],
+            features: ['Randevu Sistemi', 'Hizmet Tanıtımı', 'Doktor Profilleri', 'İletişim Bilgileri'],
+            launchDate: '2025-04-12',
+            views: '12.3K',
             rating: 4.8,
-            liveUrl: 'https://fashion-demo.com',
-            color: 'from-pink-500 to-rose-600'
-        },
-        {
-            id: 3,
-            title: 'Gourmet Restaurant',
-            category: 'restaurant',
-            description: 'Fine dining restoran için rezervasyon sistemi ve menü yönetimi',
-            image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['Vue.js', 'Firebase', 'Stripe'],
-            features: ['Online Rezervasyon', 'Menü Yönetimi', 'QR Kod Menü', 'Müşteri Değerlendirme'],
-            launchDate: '2024-10-10',
-            views: '12.5K',
-            rating: 4.7,
-            liveUrl: 'https://gourmet-demo.com',
-            color: 'from-orange-500 to-red-600'
-        },
-        {
-            id: 4,
-            title: 'MediHealth Clinic',
-            category: 'healthcare',
-            description: 'Özel sağlık kliniği için randevu sistemi ve hasta takip platformu',
-            image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['React', 'Express', 'MySQL'],
-            features: ['Randevu Sistemi', 'Hasta Takibi', 'Telemedicine', 'Raporlama'],
-            launchDate: '2024-09-05',
-            views: '8.9K',
-            rating: 4.9,
-            liveUrl: 'https://medihealth-demo.com',
+            liveUrl: 'https://comodo-teknoloji-ticaret-ltd-sti.github.io/DentalClinic/',
             color: 'from-green-500 to-teal-600'
         },
         {
-            id: 5,
-            title: 'Corporate Finance Pro',
-            category: 'corporate',
-            description: 'Finans danışmanlığı firması için profesyonel kurumsal web sitesi',
-            image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['Angular', 'ASP.NET', 'SQL Server'],
-            features: ['Portföy Yönetimi', 'Müşteri Paneli', 'Raporlama', 'Güvenlik'],
-            launchDate: '2024-08-22',
-            views: '11.3K',
-            rating: 4.8,
-            liveUrl: 'https://finance-demo.com',
-            color: 'from-indigo-500 to-blue-600'
-        },
-        {
-            id: 6,
-            title: 'EduTech Academy',
-            category: 'education',
-            description: 'Online eğitim platformu ve öğrenci yönetim sistemi',
-            image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['React', 'Node.js', 'MongoDB'],
-            features: ['LMS Sistemi', 'Video Streaming', 'Sınav Sistemi', 'Sertifika'],
-            launchDate: '2024-07-18',
-            views: '19.6K',
-            rating: 4.9,
-            liveUrl: 'https://edutech-demo.com',
-            color: 'from-purple-500 to-pink-600'
-        },
-        {
-            id: 7,
-            title: 'Luxury Hotels Chain',
-            category: 'corporate',
-            description: 'Lüks otel zinciri için rezervasyon ve yönetim sistemi',
-            image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['Next.js', 'Prisma', 'PostgreSQL'],
-            features: ['Rezervasyon Sistemi', 'Oda Yönetimi', 'CRM', 'Çoklu Lokasyon'],
-            launchDate: '2024-06-12',
-            views: '25.4K',
-            rating: 4.8,
-            liveUrl: 'https://luxury-hotels-demo.com',
-            color: 'from-amber-500 to-orange-600'
-        },
-        {
-            id: 8,
-            title: 'Fresh Market Store',
-            category: 'ecommerce',
-            description: 'Organik gıda e-ticaret platformu ve teslimat sistemi',
-            image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['Shopify', 'React', 'GraphQL'],
-            features: ['E-ticaret', 'Teslimat Takibi', 'Abonelik Sistemi', 'Mobil App'],
-            launchDate: '2024-05-28',
-            views: '18.7K',
+            id: 3,
+            title: 'Radyoloji Görüntüleme',
+            category: 'saglik',
+            description: 'Radyoloji merkezi için profesyonel ve güvenilir web sitesi',
+            image: '/websites/radiology.png',
+            technologies: ['React', 'JavaScript', 'CSS3'],
+            features: ['Görüntüleme Hizmetleri', 'Uzman Doktor Kadrosu', 'Online Randevu', 'Sonuç Takibi'],
+            launchDate: '2025-02-28',
+            views: '9.7K',
             rating: 4.7,
-            liveUrl: 'https://fresh-market-demo.com',
-            color: 'from-green-500 to-emerald-600'
-        },
-        {
-            id: 9,
-            title: 'Dental Care Center',
-            category: 'healthcare',
-            description: 'Diş kliniği için modern web sitesi ve randevu yönetimi',
-            image: 'https://images.unsplash.com/photo-1609298331087-e5c4e6c8c455?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['WordPress', 'PHP', 'MySQL'],
-            features: ['Randevu Sistemi', 'Tedavi Takibi', 'Hasta Portali', 'Online Ödeme'],
-            launchDate: '2024-04-15',
-            views: '9.8K',
-            rating: 4.8,
-            liveUrl: 'https://dental-care-demo.com',
+            liveUrl: 'https://comodo-teknoloji-ticaret-ltd-sti.github.io/radiology/',
             color: 'from-cyan-500 to-blue-600'
         },
         {
-            id: 10,
-            title: 'Artisan Craft Shop',
-            category: 'ecommerce',
-            description: 'El sanatları e-ticaret platformu ve sanatçı profilleri',
-            image: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['WooCommerce', 'React', 'WordPress'],
-            features: ['E-ticaret', 'Sanatçı Profilleri', 'Özel Sipariş', 'Galeri'],
-            launchDate: '2024-03-08',
-            views: '14.2K',
+            id: 4,
+            title: 'Rafting',
+            category: 'eglence',
+            description: 'Rafting işletmesi için eğlenceli ve interaktif web sitesi',
+            image: '/websites/raft.png',
+            technologies: ['React', 'JavaScript', 'Gaming API'],
+            features: ['Etkinlik Paketleri', '3 Farklı Dil Desteği', 'Etkinlik Takvimi', 'Topluluk Forumu'],
+            launchDate: '2025-01-15',
+            views: '15.2K',
             rating: 4.9,
-            liveUrl: 'https://artisan-demo.com',
-            color: 'from-violet-500 to-purple-600'
+            liveUrl: 'https://mcraftantalya.com/',
+            color: 'from-orange-500 to-red-600'
         },
         {
-            id: 11,
-            title: 'Fitness Pro Gym',
-            category: 'corporate',
-            description: 'Fitness merkezi için üyelik yönetimi ve antrenman programları',
-            image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['React', 'Firebase', 'Stripe'],
-            features: ['Üyelik Sistemi', 'Antrenman Programları', 'Beslenme Takibi', 'Mobil App'],
-            launchDate: '2024-02-20',
-            views: '16.5K',
-            rating: 4.7,
-            liveUrl: 'https://fitness-pro-demo.com',
-            color: 'from-red-500 to-orange-600'
+            id: 5,
+            title: 'Yapı Denetim',
+            category: 'kurumsal',
+            description: 'Yapı denetim firması için kurumsal web sitesi tasarımı',
+            image: '/websites/yapidenetim.png',
+            technologies: ['React', 'JavaScript', 'CSS3'],
+            features: ['Kurumsal Kimlik', 'Hizmet Portfolyosu', 'Proje Galerisi', 'İletişim Bilgileri'],
+            launchDate: '2024-12-08',
+            views: '6.8K',
+            rating: 4.6,
+            liveUrl: 'https://gundemydk.com/',
+            color: 'from-indigo-500 to-purple-600'
         },
         {
-            id: 12,
-            title: 'Cozy Café & Bistro',
-            category: 'restaurant',
-            description: 'Butik kafe için sipariş sistemi ve etkinlik yönetimi',
-            image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&h=450&fit=crop&crop=entropy',
-            technologies: ['Vue.js', 'Node.js', 'MongoDB'],
-            features: ['Online Sipariş', 'Etkinlik Yönetimi', 'Loyalty Program', 'QR Menü'],
-            launchDate: '2024-01-10',
-            views: '10.7K',
+            id: 6,
+            title: 'Comodo Bee',
+            category: 'comodo',
+            description: 'Comodo Bee arıcılık ürünleri satış platformu',
+            image: '/websites/cbee.png',
+            technologies: ['React', 'JavaScript', 'E-commerce'],
+            features: ['Ürün Kataloğu', 'Online Satış', 'Arıcılık Rehberi', 'Müşteri Desteği'],
+            launchDate: '2024-11-03',
+            views: '11.4K',
             rating: 4.8,
-            liveUrl: 'https://cozy-cafe-demo.com',
-            color: 'from-amber-500 to-yellow-600'
+            liveUrl: 'https://comodobee.com/',
+            color: 'from-yellow-500 to-amber-600'
+        },
+        {
+            id: 7,
+            title: 'Comodo Print',
+            category: 'eticaret',
+            description: 'Dijital baskı ve tasarım hizmetleri e-ticaret platformu',
+            image: '/websites/cprint.png',
+            technologies: ['React', 'JavaScript', 'E-commerce'],
+            features: ['Online Sipariş', 'Tasarım Editörü', 'Baskı Hesaplama', 'Kargo Takibi'],
+            launchDate: '2024-10-17',
+            views: '18.9K',
+            rating: 4.9,
+            liveUrl: 'https://comodoprint.com/',
+            color: 'from-purple-500 to-pink-600'
         }
     ];
 
@@ -199,24 +129,24 @@ const WebSites = () => {
             <header className="bg-white/90 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 sm:space-x-4">
                             <Link 
                                 to="/" 
-                                className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
+                                className="flex items-center space-x-1 sm:space-x-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
                             >
-                                <ArrowLeft className="w-5 h-5" />
-                                <span>Ana Sayfa</span>
+                                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                                <span className="text-sm sm:text-base">Ana Sayfa</span>
                             </Link>
-                            <div className="h-6 w-px bg-gray-300"></div>
-                            <h1 className="text-xl font-bold text-gray-900">Web Siteleri</h1>
+                            <div className="h-4 sm:h-6 w-px bg-gray-300"></div>
+                            <h1 className="text-lg sm:text-xl font-bold text-gray-900">Web Siteleri</h1>
                         </div>
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 sm:space-x-4">
                             <button
                                 onClick={openWhatsApp}
-                                className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300"
+                                className="flex items-center space-x-1 sm:space-x-2 bg-green-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300"
                             >
-                                <MessageCircle className="w-4 h-4" />
-                                <span>Teklif Al</span>
+                                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <span className="text-sm sm:text-base">Teklif Al</span>
                             </button>
                         </div>
                     </div>
@@ -282,7 +212,11 @@ const WebSites = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredWebsites.map((website) => (
-                            <div key={website.id} className="group relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                            <div 
+                                key={website.id} 
+                                className="group relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer"
+                                onClick={() => window.open(website.liveUrl, '_blank')}
+                            >
                                 
                                 {/* Image */}
                                 <div className="relative aspect-video overflow-hidden">
@@ -296,7 +230,10 @@ const WebSites = () => {
                                     {/* Overlay Actions */}
                                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <button
-                                            onClick={() => window.open(website.liveUrl, '_blank')}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                window.open(website.liveUrl, '_blank');
+                                            }}
                                             className="bg-white/90 backdrop-blur-sm text-gray-900 px-6 py-3 rounded-full font-medium flex items-center space-x-2 hover:bg-white transition-colors duration-300"
                                         >
                                             <ExternalLink className="w-4 h-4" />
