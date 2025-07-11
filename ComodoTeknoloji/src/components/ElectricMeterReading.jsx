@@ -278,6 +278,26 @@ const Electric = () => {
         }
     };
 
+    // Mobile responsive pie chart options
+    const getMobilePieChartOptions = () => ({
+        ...pieChartOptions,
+        plugins: {
+            ...pieChartOptions.plugins,
+            legend: {
+                position: window.innerWidth < 768 ? 'bottom' : 'right',
+                labels: {
+                    font: {
+                        size: window.innerWidth < 640 ? 10 : 12,
+                        weight: 'bold'
+                    },
+                    padding: window.innerWidth < 640 ? 10 : 20,
+                    usePointStyle: true,
+                    pointStyle: 'circle'
+                }
+            }
+        }
+    });
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -364,29 +384,29 @@ const Electric = () => {
             {/* Header */}
             <div className={`fixed w-full z-50 transition-all duration-500 ${scrollY > 50 ? 'bg-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-lg' : 'bg-white/80 backdrop-blur-sm'}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-20">
-                        <div className="flex items-center space-x-3">
+                    <div className="flex justify-between items-center h-16 sm:h-20">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur opacity-75"></div>
-                                <div className="relative bg-white text-white p-2 rounded-xl">
-                                    <img src="../ComodoTeknoloji.png" alt="Comodo Teknoloji" className="w-12 h-12 rounded-xl" />
+                                <div className="relative bg-white text-white p-1 sm:p-2 rounded-xl">
+                                    <img src="../ComodoTeknoloji.png" alt="Comodo Teknoloji" className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl" />
                                 </div>
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                                     Comodo
                                 </h1>
-                                <p className="text-xs text-gray-500 -mt-1">Teknoloji</p>
+                                <p className="text-xs text-gray-500 -mt-1 hidden sm:block">Teknoloji</p>
                             </div>
                         </div>
 
-                        <nav className="flex items-center space-x-4">
+                        <nav className="flex items-center space-x-2 sm:space-x-4">
                             <Link
                                 to="/"
-                                className="flex items-center px-6 py-3 rounded-xl font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
+                                className="flex items-center px-3 py-2 sm:px-6 sm:py-3 rounded-xl font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base"
                             >
-                                <Home className="w-4 h-4 mr-2" />
-                                Ana Sayfa
+                                <Home className="w-4 h-4 sm:mr-2" />
+                                <span className="hidden sm:inline">Ana Sayfa</span>
                             </Link>
                         </nav>
                     </div>
@@ -394,153 +414,159 @@ const Electric = () => {
             </div>
 
             {/* Main Content - Add proper top padding */}
-            <div className="pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="pt-20 sm:pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
                 {/* Hero Section */}
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center px-6 py-3 rounded-full bg-blue-100 border border-blue-200 text-sm mb-6">
-                        <Zap className="w-4 h-4 mr-2 text-blue-600" />
+                <div className="text-center mb-6 sm:mb-8">
+                    <div className="inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-blue-100 border border-blue-200 text-xs sm:text-sm mb-4 sm:mb-6">
+                        <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-blue-600" />
                         <span className="text-blue-700">IoT Projesi</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6">
+                    <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6">
                         <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                             Uzaktan Elektrik Sayaçları
                         </span>
                         <br />
                         <span className="text-gray-900">Okuma Sistemi</span>
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+                    <p className="text-sm sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
                         IoT teknolojisi ile elektrik sayaçlarını uzaktan okuma ve izleme sistemi.
                         Gerçek zamanlı veri toplama, analiz ve raporlama çözümü.
                     </p>
                 </div>
 
+
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 border-l-4 border-blue-500">
+                        <div className="flex items-center">
+                            <div className="flex-shrink-0">
+                                <div className="text-2xl sm:text-3xl">🏨</div>
+                            </div>
+                            <div className="ml-3 sm:ml-4">
+                                <p className="text-xs sm:text-sm font-medium text-gray-500">Lara Otel</p>
+                                <p className="text-lg sm:text-2xl font-bold text-blue-600">{gsrTotal.toLocaleString()} W</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 border-l-4 border-pink-500">
+                        <div className="flex items-center">
+                            <div className="flex-shrink-0">
+                                <div className="text-2xl sm:text-3xl">🏖️</div>
+                            </div>
+                            <div className="ml-3 sm:ml-4">
+                                <p className="text-xs sm:text-sm font-medium text-gray-500">Kemer Otel</p>
+                                <p className="text-lg sm:text-2xl font-bold text-pink-600">{selTotal.toLocaleString()} W</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 border-l-4 border-purple-500 sm:col-span-2 lg:col-span-1">
+                        <div className="flex items-center">
+                            <div className="flex-shrink-0">
+                                <div className="text-2xl sm:text-3xl">⚡</div>
+                            </div>
+                            <div className="ml-3 sm:ml-4">
+                                <p className="text-xs sm:text-sm font-medium text-gray-500">Toplam Güç</p>
+                                <p className="text-lg sm:text-2xl font-bold text-purple-600">{(gsrTotal + selTotal).toLocaleString()} W</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Tab Navigation */}
-                <div className="mb-8">
+                <div className="mb-6 sm:mb-8">
                     <div className="border-b border-gray-200">
-                        <nav className="-mb-px flex space-x-8">
+                        <nav className="-mb-px flex space-x-2 sm:space-x-4 md:space-x-8 overflow-x-auto scrollbar-hide">
                             {[
                                 {
                                     id: 'overview',
                                     label: 'Genel Bakış',
-                                    icon: '📊'
+                                    icon: '📊',
+                                    shortLabel: 'Genel'
                                 },
                                 {
                                     id: 'detailed',
                                     label: 'Detaylı Analiz',
-                                    icon: '🔍'
+                                    icon: '🔍',
+                                    shortLabel: 'Detaylı'
                                 },
                                 {
                                     id: 'comparison',
                                     label: 'Karşılaştırma',
-                                    icon: '⚖️'
+                                    icon: '⚖️',
+                                    shortLabel: 'Karşılaştırma'
                                 },
                                 {
                                     id: 'distribution',
                                     label: 'Dağılım & Tablo',
-                                    icon: '🥧'
+                                    icon: '🥧',
+                                    shortLabel: 'Dağılım'
                                 }
                             ].map((tab) => (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors duration-200 ${activeTab === tab.id
+                                    className={`py-2 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm flex items-center space-x-1 sm:space-x-2 transition-colors duration-200 whitespace-nowrap ${activeTab === tab.id
                                         ? 'border-blue-500 text-blue-600'
                                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                         }`}
                                 >
                                     <span>{tab.icon}</span>
-                                    <span>{tab.label}</span>
+                                    <span className="hidden sm:inline">{tab.label}</span>
+                                    <span className="sm:hidden">{tab.shortLabel}</span>
                                 </button>
                             ))}
                         </nav>
                     </div>
                 </div>
 
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
-                        <div className="flex items-center">
-                            <div className="flex-shrink-0">
-                                <div className="text-3xl">🏨</div>
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-500">Lara Otel</p>
-                                <p className="text-2xl font-bold text-blue-600">{gsrTotal.toLocaleString()} W</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-pink-500">
-                        <div className="flex items-center">
-                            <div className="flex-shrink-0">
-                                <div className="text-3xl">🏖️</div>
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-500">Kemer Otel</p>
-                                <p className="text-2xl font-bold text-pink-600">{selTotal.toLocaleString()} W</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
-                        <div className="flex items-center">
-                            <div className="flex-shrink-0">
-                                <div className="text-3xl">⚡</div>
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-500">Toplam Güç</p>
-                                <p className="text-2xl font-bold text-purple-600">{(gsrTotal + selTotal).toLocaleString()} W</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Tab Content */}
                 {activeTab === 'overview' && (
-                    <div className="space-y-8">
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h3 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
+                    <div className="space-y-6 sm:space-y-8">
+                        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                            <h3 className="text-lg sm:text-xl font-bold mb-4 text-gray-800 flex items-center">
                                 <span className="mr-2">⚖️</span>
                                 Tesis Karşılaştırması
                             </h3>
-                            <div className="h-80">
+                            <div className="h-64 sm:h-80">
                                 <Bar data={comparisonData} options={chartOptions} />
                             </div>
                         </div>
 
                         {/* Project Features Overview */}
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h3 className="text-xl font-bold mb-6 text-gray-800 flex items-center">
+                        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                            <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-gray-800 flex items-center">
                                 <span className="mr-2">🔧</span>
                                 Proje Özellikleri
                             </h3>
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                                <div className="space-y-3 sm:space-y-4">
                                     <div className="flex items-start">
-                                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                                        <span>IoT sensörlerle otomatik okuma</span>
+                                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-2 sm:mr-3 mt-0.5 flex-shrink-0" />
+                                        <span className="text-sm sm:text-base">IoT sensörlerle otomatik okuma</span>
                                     </div>
                                     <div className="flex items-start">
-                                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                                        <span>Gerçek zamanlı veri izleme</span>
+                                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-2 sm:mr-3 mt-0.5 flex-shrink-0" />
+                                        <span className="text-sm sm:text-base">Gerçek zamanlı veri izleme</span>
                                     </div>
                                     <div className="flex items-start">
-                                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                                        <span>Mobil uygulama desteği</span>
+                                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-2 sm:mr-3 mt-0.5 flex-shrink-0" />
+                                        <span className="text-sm sm:text-base">Mobil uygulama desteği</span>
                                     </div>
                                 </div>
-                                <div className="space-y-4">
+                                <div className="space-y-3 sm:space-y-4">
                                     <div className="flex items-start">
-                                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                                        <span>Anomali tespiti ve uyarı sistemi</span>
+                                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-2 sm:mr-3 mt-0.5 flex-shrink-0" />
+                                        <span className="text-sm sm:text-base">Anomali tespiti ve uyarı sistemi</span>
                                     </div>
                                     <div className="flex items-start">
-                                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                                        <span>Otomatik fatura hesaplama</span>
+                                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-2 sm:mr-3 mt-0.5 flex-shrink-0" />
+                                        <span className="text-sm sm:text-base">Otomatik fatura hesaplama</span>
                                     </div>
                                     <div className="flex items-start">
-                                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                                        <span>Veri analizi ve raporlama</span>
+                                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-2 sm:mr-3 mt-0.5 flex-shrink-0" />
+                                        <span className="text-sm sm:text-base">Veri analizi ve raporlama</span>
                                     </div>
                                 </div>
                             </div>
@@ -549,10 +575,10 @@ const Electric = () => {
                 )}
 
                 {activeTab === 'detailed' && (
-                    <div className="space-y-8">
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h3 className="text-xl font-bold mb-4 text-gray-800">🏨 Lara Otel - Detaylı Analiz</h3>
-                            <div className="h-96">
+                    <div className="space-y-6 sm:space-y-8">
+                        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                            <h3 className="text-lg sm:text-xl font-bold mb-4 text-gray-800">🏨 Lara Otel - Detaylı Analiz</h3>
+                            <div className="h-64 sm:h-80 md:h-96">
                                 <Bar data={{
                                     labels: gsrChart.labels,
                                     datasets: [{
@@ -568,9 +594,9 @@ const Electric = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h3 className="text-xl font-bold mb-4 text-gray-800">🏖️ Kemer Otel - Detaylı Analiz</h3>
-                            <div className="h-96">
+                        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                            <h3 className="text-lg sm:text-xl font-bold mb-4 text-gray-800">🏖️ Kemer Otel - Detaylı Analiz</h3>
+                            <div className="h-64 sm:h-80 md:h-96">
                                 <Bar data={{
                                     labels: selChart.labels,
                                     datasets: [{
@@ -589,10 +615,10 @@ const Electric = () => {
                 )}
 
                 {activeTab === 'comparison' && (
-                    <div className="space-y-8">
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h3 className="text-xl font-bold mb-4 text-gray-800">📈 Trend Analizi</h3>
-                            <div className="h-96">
+                    <div className="space-y-6 sm:space-y-8">
+                        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                            <h3 className="text-lg sm:text-xl font-bold mb-4 text-gray-800">📈 Trend Analizi</h3>
+                            <div className="h-64 sm:h-80 md:h-96">
                                 <Line data={trendData} options={{
                                     ...chartOptions,
                                     interaction: {
@@ -612,45 +638,45 @@ const Electric = () => {
                 )}
 
                 {activeTab === 'distribution' && (
-                    <div className="space-y-8">
+                    <div className="space-y-6 sm:space-y-8">
                         {/* Pie Chart */}
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h3 className="text-xl font-bold mb-4 text-gray-800">🥧 Güç Tüketimi Dağılımı</h3>
-                            <div className="h-96">
-                                <Pie data={pieData} options={pieChartOptions} />
+                        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                            <h3 className="text-lg sm:text-xl font-bold mb-4 text-gray-800">🥧 Güç Tüketimi Dağılımı</h3>
+                            <div className="h-64 sm:h-80 md:h-96">
+                                <Pie data={pieData} options={getMobilePieChartOptions()} />
                                 <p className="mt-2 text-xs text-gray-500">İlk 20 cihaz gösteriliyor.</p>
                             </div>
                         </div>
 
                         {/* Detailed Table */}
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h3 className="text-xl font-bold mb-4 text-gray-800">📋 Detaylı Tüketim Tablosu</h3>
+                        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                            <h3 className="text-lg sm:text-xl font-bold mb-4 text-gray-800">📋 Detaylı Tüketim Tablosu</h3>
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Cihaz Adı
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                                                 Seri No
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                                                 Marka
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                                                 Voltaj (V)
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                                                 Akım (A)
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Anlık Güç (W)
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                                                 Toplam Tüketim (W)
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
                                                 Son Güncelleme
                                             </th>
                                         </tr>
@@ -658,26 +684,26 @@ const Electric = () => {
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {data.slice(0, 20).map((device, index) => (
                                             <tr key={device.cihazId} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                                                     <div className="flex items-center">
-                                                        <div className={`w-3 h-3 rounded-full mr-3 ${device.cihazAdi.startsWith('Kemer') ? 'bg-blue-500' : 'bg-pink-500'
+                                                        <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full mr-2 sm:mr-3 ${device.cihazAdi.startsWith('Kemer') ? 'bg-blue-500' : 'bg-pink-500'
                                                             }`}></div>
-                                                        {device.cihazAdi}
+                                                        <span className="truncate max-w-[120px] sm:max-w-none">{device.cihazAdi}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden sm:table-cell">
                                                     {device.seriNumarasi}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden md:table-cell">
                                                     {device.marka}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden lg:table-cell">
                                                     {device.voltajlar}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden lg:table-cell">
                                                     {device.akimlar}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                                <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-semibold text-gray-900">
                                                     <span className={`px-2 py-1 rounded-full text-xs ${device.anlikGuc > 50000 ? 'bg-red-100 text-red-800' :
                                                         device.anlikGuc > 30000 ? 'bg-yellow-100 text-yellow-800' :
                                                             'bg-green-100 text-green-800'
@@ -685,10 +711,10 @@ const Electric = () => {
                                                         {device.anlikGuc.toLocaleString()} W
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden md:table-cell">
                                                     {device.toplamTuketim.toLocaleString()} W
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden xl:table-cell">
                                                     {device.calismaSaati}
                                                 </td>
                                             </tr>
@@ -700,47 +726,47 @@ const Electric = () => {
                         </div>
 
                         {/* Summary Statistics */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div className="bg-white rounded-lg shadow-lg p-6">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
                                 <div className="flex items-center">
-                                    <div className="text-2xl text-blue-600">📊</div>
-                                    <div className="ml-4">
-                                        <p className="text-sm font-medium text-gray-500">Toplam Cihaz</p>
-                                        <p className="text-2xl font-bold text-gray-900">{data.length}</p>
+                                    <div className="text-xl sm:text-2xl text-blue-600">📊</div>
+                                    <div className="ml-3 sm:ml-4">
+                                        <p className="text-xs sm:text-sm font-medium text-gray-500">Toplam Cihaz</p>
+                                        <p className="text-lg sm:text-2xl font-bold text-gray-900">{data.length}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-lg shadow-lg p-6">
+                            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
                                 <div className="flex items-center">
-                                    <div className="text-2xl text-green-600">📈</div>
-                                    <div className="ml-4">
-                                        <p className="text-sm font-medium text-gray-500">Ortalama Tüketim</p>
-                                        <p className="text-2xl font-bold text-gray-900">
+                                    <div className="text-xl sm:text-2xl text-green-600">📈</div>
+                                    <div className="ml-3 sm:ml-4">
+                                        <p className="text-xs sm:text-sm font-medium text-gray-500">Ortalama Tüketim</p>
+                                        <p className="text-sm sm:text-2xl font-bold text-gray-900">
                                             {(data.reduce((sum, d) => sum + d.anlikGuc, 0) / data.length).toLocaleString()} W
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-lg shadow-lg p-6">
+                            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
                                 <div className="flex items-center">
-                                    <div className="text-2xl text-red-600">🔥</div>
-                                    <div className="ml-4">
-                                        <p className="text-sm font-medium text-gray-500">En Yüksek Tüketim</p>
-                                        <p className="text-2xl font-bold text-gray-900">
+                                    <div className="text-xl sm:text-2xl text-red-600">🔥</div>
+                                    <div className="ml-3 sm:ml-4">
+                                        <p className="text-xs sm:text-sm font-medium text-gray-500">En Yüksek Tüketim</p>
+                                        <p className="text-sm sm:text-2xl font-bold text-gray-900">
                                             {Math.max(...data.map(d => d.anlikGuc)).toLocaleString()} W
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-lg shadow-lg p-6">
+                            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
                                 <div className="flex items-center">
-                                    <div className="text-2xl text-blue-600">❄️</div>
-                                    <div className="ml-4">
-                                        <p className="text-sm font-medium text-gray-500">En Düşük Tüketim</p>
-                                        <p className="text-2xl font-bold text-gray-900">
+                                    <div className="text-xl sm:text-2xl text-blue-600">❄️</div>
+                                    <div className="ml-3 sm:ml-4">
+                                        <p className="text-xs sm:text-sm font-medium text-gray-500">En Düşük Tüketim</p>
+                                        <p className="text-sm sm:text-2xl font-bold text-gray-900">
                                             {Math.min(...data.map(d => d.anlikGuc)).toLocaleString()} W
                                         </p>
                                     </div>
@@ -752,18 +778,18 @@ const Electric = () => {
             </div>
 
             {/* Footer */}
-            <footer className="bg-gray-900 text-white py-16">
+            <footer className="bg-gray-900 text-white py-8 sm:py-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="flex items-center justify-center space-x-3 mb-6">
-                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-xl">
-                            <Code className="w-6 h-6" />
+                    <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-2 sm:p-3 rounded-xl">
+                            <Code className="w-4 h-4 sm:w-6 sm:h-6" />
                         </div>
                         <div>
-                            <h3 className="text-2xl font-bold">Comodo Teknoloji</h3>
-                            <p className="text-gray-400 text-sm">Dijital Dönüşüm Partneri</p>
+                            <h3 className="text-lg sm:text-2xl font-bold">Comodo Teknoloji</h3>
+                            <p className="text-gray-400 text-xs sm:text-sm">Dijital Dönüşüm Partneri</p>
                         </div>
                     </div>
-                    <p className="text-gray-400">&copy; 2025 Comodo Teknoloji. Tüm hakları saklıdır.</p>
+                    <p className="text-gray-400 text-xs sm:text-base">&copy; 2025 Comodo Teknoloji. Tüm hakları saklıdır.</p>
                 </div>
             </footer>
         </div>
