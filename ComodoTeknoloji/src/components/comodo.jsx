@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Code, Globe, Smartphone, Database, Shield, Users, Award, Mail, Phone, MapPin, Menu, X, Star, CheckCircle, ArrowRight, Zap, Target, TrendingUp, Eye, Clock, Palette, Cpu, Layers, Settings, Play, Quote, Briefcase, Rocket, LineChart, MessageCircle, Send, Bot, Minimize2, Maximize2 } from 'lucide-react';
+import { ChevronRight, Code, Globe, Smartphone, Database, Shield, Users, Award, Mail, Phone, MapPin, Menu, X, Star, CheckCircle, ArrowRight, Zap, Target, TrendingUp, Eye, Clock, Palette, Cpu, Layers, Settings, Play, Quote, Briefcase, Rocket, LineChart, MessageCircle, Send, Bot, Minimize2, Maximize2, ChevronDown } from 'lucide-react';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import ElectricMeterReading from './ElectricMeterReading';
+import HotelReviewsAnalysis from './HotelReviewsAnalysis';
 
 const ComodoWebsite = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
     const [scrollY, setScrollY] = useState(0);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -260,6 +264,32 @@ const ComodoWebsite = () => {
         window.open('https://wa.me/905059982093?text=Merhaba, Comodo hizmetleri hakkında bilgi almak istiyorum.', '_blank');
     };
 
+    const navigate = useNavigate();
+
+    // Projects data
+    const projects = [
+        {
+            name: 'Uzaktan Elektrik Sayaçları Okuma',
+            path: '/projects/electric-meter-reading',
+            description: 'IoT tabanlı elektrik sayaçları okuma sistemi'
+        },
+        {
+            name: 'Otel Yorumları Analizi',
+            path: '/projects/hotel-reviews-analysis',
+            description: 'AI destekli otel yorumları analiz platformu'
+        }
+        // {
+        //     name: 'E-Ticaret Platformu',
+        //     path: '/projects/ecommerce-platform',
+        //     description: 'Özel e-ticaret çözümleri'
+        // },
+        // {
+        //     name: 'Mobil Bankacılık',
+        //     path: '/projects/mobile-banking',
+        //     description: 'Güvenli mobil bankacılık uygulaması'
+        // }
+    ];
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 text-gray-800 overflow-x-hidden">
             {/* Animated Background */}
@@ -298,12 +328,19 @@ const ComodoWebsite = () => {
 
                         {/* Desktop Navigation */}
                         <nav className="hidden md:flex space-x-1">
-                            {[
-                                { name: 'Ana Sayfa', id: 'home' },
-                                { name: 'Çözümler', id: 'services' },
-                                { name: 'Başarı Hikayeleri', id: 'success' },
-                                { name: 'İletişim', id: 'contact' }
-                            ].map((item) => (
+                            {[{
+                                name: 'Ana Sayfa',
+                                id: 'home'
+                            }, {
+                                name: 'Çözümler',
+                                id: 'services'
+                            }, {
+                                name: 'Başarı Hikayeleri',
+                                id: 'success'
+                            }, {
+                                name: 'İletişim',
+                                id: 'contact'
+                            }].map((item) => (
                                 <button
                                     key={item.name}
                                     onClick={() => scrollToSection(item.id)}
@@ -315,6 +352,40 @@ const ComodoWebsite = () => {
                                     {item.name}
                                 </button>
                             ))}
+
+                            {/* Projects Dropdown */}
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsProjectsDropdownOpen(!isProjectsDropdownOpen)}
+                                    className="flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                                >
+                                    Projelerimiz
+                                    <ChevronDown className={`ml-1 w-4 h-4 transition-transform duration-300 ${isProjectsDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {isProjectsDropdownOpen && (
+                                    <div className="absolute top-full left-0 mt-2 w-80 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-2xl z-50">
+                                        <div className="p-2">
+                                            {projects.map((project, index) => (
+                                                <Link
+                                                    key={index}
+                                                    to={project.path}
+                                                    className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 group"
+                                                    onClick={() => setIsProjectsDropdownOpen(false)}
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <div>
+                                                            <div className="font-medium">{project.name}</div>
+                                                            <div className="text-sm text-gray-500">{project.description}</div>
+                                                        </div>
+                                                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </nav>
 
                         {/* Mobile menu button */}
@@ -330,26 +401,52 @@ const ComodoWebsite = () => {
                 </div>
 
                 {/* Mobile Navigation */}
-                {isMenuOpen && (
-                    <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-gray-200/50">
-                        <div className="px-4 py-6 space-y-2">
-                            {[
-                                { name: 'Ana Sayfa', id: 'home' },
-                                { name: 'Çözümler', id: 'services' },
-                                { name: 'Başarı Hikayeleri', id: 'success' },
-                                { name: 'İletişim', id: 'contact' }
-                            ].map((item) => (
-                                <button
-                                    key={item.name}
-                                    onClick={() => scrollToSection(item.id)}
-                                    className="block w-full text-left px-4 py-3 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
-                                >
-                                    {item.name}
-                                </button>
-                            ))}
+                {
+                    isMenuOpen && (
+                        <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-gray-200/50">
+                            <div className="px-4 py-6 space-y-2">
+                                {[{
+                                    name: 'Ana Sayfa',
+                                    id: 'home'
+                                }, {
+                                    name: 'Çözümler',
+                                    id: 'services'
+                                }, {
+                                    name: 'Başarı Hikayeleri',
+                                    id: 'success'
+                                }, {
+                                    name: 'İletişim',
+                                    id: 'contact'
+                                }].map((item) => (
+                                    <button
+                                        key={item.name}
+                                        onClick={() => scrollToSection(item.id)}
+                                        className="block w-full text-left px-4 py-3 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
+                                    >
+                                        {item.name}
+                                    </button>
+                                ))}
+
+                                {/* Mobile Projects Section */}
+                                <div className="border-t border-gray-200 pt-4 mt-4">
+                                    <div className="px-4 py-2 text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                        Projelerimiz
+                                    </div>
+                                    {projects.map((project, index) => (
+                                        <Link
+                                            key={index}
+                                            to={project.path}
+                                            className="block px-4 py-3 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            <div className="font-medium">{project.name}</div>
+                                            <div className="text-sm text-gray-500">{project.description}</div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
             </header>
 
             {/* Hero Section */}
@@ -831,111 +928,115 @@ const ComodoWebsite = () => {
             </section>
 
             {/* AI Assistant Chat */}
-            {isChatOpen && (
-                <div className={`fixed bottom-4 right-4 z-50 transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'
-                    }`}>
-                    <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
-                        {/* Chat Header */}
-                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                                    <Bot className="w-4 h-4" />
-                                </div>
-                                <div>
-                                    <div className="font-semibold">Comodo AI</div>
-                                    <div className="text-xs opacity-75">Hemen yardım alın</div>
-                                </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <button
-                                    onClick={() => setIsMinimized(!isMinimized)}
-                                    className="p-1 hover:bg-white/20 rounded"
-                                >
-                                    {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
-                                </button>
-                                <button
-                                    onClick={() => setIsChatOpen(false)}
-                                    className="p-1 hover:bg-white/20 rounded"
-                                >
-                                    <X className="w-4 h-4" />
-                                </button>
-                            </div>
-                        </div>
-
-                        {!isMinimized && (
-                            <>
-                                {/* Chat Messages */}
-                                <div className="h-64 overflow-y-auto p-4 space-y-4">
-                                    {chatMessages.map((message) => (
-                                        <div
-                                            key={message.id}
-                                            className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                                        >
-                                            <div
-                                                className={`max-w-xs px-4 py-2 rounded-2xl ${message.sender === 'user'
-                                                    ? 'bg-blue-500 text-white'
-                                                    : 'bg-gray-100 text-gray-800'
-                                                    }`}
-                                            >
-                                                <p className="text-sm">{message.text}</p>
-                                                <div className="text-xs opacity-75 mt-1">
-                                                    {message.timestamp.toLocaleTimeString('tr-TR', {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-
-                                    {isTyping && (
-                                        <div className="flex justify-start">
-                                            <div className="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl">
-                                                <div className="flex space-x-1">
-                                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-                                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Chat Input */}
-                                <div className="p-4 border-t border-gray-200">
-                                    <div className="flex space-x-2">
-                                        <input
-                                            type="text"
-                                            value={currentMessage}
-                                            onChange={(e) => setCurrentMessage(e.target.value)}
-                                            onKeyPress={handleKeyPress}
-                                            placeholder="Mesajınızı yazın..."
-                                            className="flex-1 px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                                        />
-                                        <button
-                                            onClick={handleSendMessage}
-                                            disabled={!currentMessage.trim() || isTyping}
-                                            className="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
-                                        >
-                                            <Send className="w-4 h-4" />
-                                        </button>
+            {
+                isChatOpen && (
+                    <div className={`fixed bottom-4 right-4 z-50 transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'
+                        }`}>
+                        <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+                            {/* Chat Header */}
+                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 flex items-center justify-between">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                                        <Bot className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold">Comodo AI</div>
+                                        <div className="text-xs opacity-75">Hemen yardım alın</div>
                                     </div>
                                 </div>
-                            </>
-                        )}
+                                <div className="flex items-center space-x-2">
+                                    <button
+                                        onClick={() => setIsMinimized(!isMinimized)}
+                                        className="p-1 hover:bg-white/20 rounded"
+                                    >
+                                        {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+                                    </button>
+                                    <button
+                                        onClick={() => setIsChatOpen(false)}
+                                        className="p-1 hover:bg-white/20 rounded"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {!isMinimized && (
+                                <>
+                                    {/* Chat Messages */}
+                                    <div className="h-64 overflow-y-auto p-4 space-y-4">
+                                        {chatMessages.map((message) => (
+                                            <div
+                                                key={message.id}
+                                                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                            >
+                                                <div
+                                                    className={`max-w-xs px-4 py-2 rounded-2xl ${message.sender === 'user'
+                                                        ? 'bg-blue-500 text-white'
+                                                        : 'bg-gray-100 text-gray-800'
+                                                        }`}
+                                                >
+                                                    <p className="text-sm">{message.text}</p>
+                                                    <div className="text-xs opacity-75 mt-1">
+                                                        {message.timestamp.toLocaleTimeString('tr-TR', {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {isTyping && (
+                                            <div className="flex justify-start">
+                                                <div className="bg-gray-100 text-gray-800 px-4 py-2 rounded-2xl">
+                                                    <div className="flex space-x-1">
+                                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
+                                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Chat Input */}
+                                    <div className="p-4 border-t border-gray-200">
+                                        <div className="flex space-x-2">
+                                            <input
+                                                type="text"
+                                                value={currentMessage}
+                                                onChange={(e) => setCurrentMessage(e.target.value)}
+                                                onKeyPress={handleKeyPress}
+                                                placeholder="Mesajınızı yazın..."
+                                                className="flex-1 px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                            />
+                                            <button
+                                                onClick={handleSendMessage}
+                                                disabled={!currentMessage.trim() || isTyping}
+                                                className="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
+                                            >
+                                                <Send className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* AI Assistant Toggle Button */}
-            {!isChatOpen && (
-                <button
-                    onClick={() => setIsChatOpen(true)}
-                    className="fixed bottom-4 right-4 z-50 w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center"
-                >
-                    <Bot className="w-6 h-6" />
-                </button>
-            )}
+            {
+                !isChatOpen && (
+                    <button
+                        onClick={() => setIsChatOpen(true)}
+                        className="fixed bottom-4 right-4 z-50 w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center"
+                    >
+                        <Bot className="w-6 h-6" />
+                    </button>
+                )
+            }
 
             {/* Footer */}
             <footer className="bg-gray-900 text-white py-16">
@@ -994,8 +1095,23 @@ const ComodoWebsite = () => {
                     </div>
                 </div>
             </footer>
-        </div>
+        </div >
     );
 };
 
-export default ComodoWebsite;
+// Remove the inline component definitions and update the App component
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<ComodoWebsite />} />
+                <Route path="/projects/electric-meter-reading" element={<ElectricMeterReading />} />
+                <Route path="/projects/hotel-reviews-analysis" element={<HotelReviewsAnalysis />} />
+                {/* <Route path="/projects/ecommerce-platform" element={<div className="min-h-screen pt-20 flex items-center justify-center"><h1 className="text-4xl">E-Ticaret Platformu - Yakında</h1></div>} /> */}
+                {/* <Route path="/projects/mobile-banking" element={<div className="min-h-screen pt-20 flex items-center justify-center"><h1 className="text-4xl">Mobil Bankacılık - Yakında</h1></div>} /> */}
+            </Routes>
+        </Router>
+    );
+};
+
+export default App;
