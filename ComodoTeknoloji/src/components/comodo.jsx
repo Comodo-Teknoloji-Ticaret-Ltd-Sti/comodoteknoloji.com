@@ -3,10 +3,12 @@ import { ChevronRight, Code, Globe, Smartphone, Database, Shield, Users, Award, 
 import { HashRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import ElectricMeterReading from './ElectricMeterReading';
 import HotelReviewsAnalysis from './HotelReviewsAnalysis';
+import WebSites from './WebSites';
 
 const ComodoWebsite = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
+    const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
     const [scrollY, setScrollY] = useState(0);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -38,12 +40,21 @@ const ComodoWebsite = () => {
             setMousePosition({ x: e.clientX, y: e.clientY });
         };
 
+        const handleClickOutside = (event) => {
+            if (!event.target.closest('.dropdown-container')) {
+                setIsProjectsDropdownOpen(false);
+                setIsProductsDropdownOpen(false);
+            }
+        };
+
         window.addEventListener('scroll', handleScroll);
         window.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('click', handleClickOutside);
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('click', handleClickOutside);
         };
     }, []);
 
@@ -269,25 +280,66 @@ const ComodoWebsite = () => {
     // Projects data
     const projects = [
         {
+            name: 'Web Siteleri',
+            path: '/projects/web-sites',
+            description: 'Özel tasarım web sitesi örnekleri'
+        }
+        // Projeler artık ürünler bölümüne taşındı
+    ];
+
+    // Products data
+    const products = [
+        {
             name: 'Uzaktan Elektrik Sayaçları Okuma',
-            path: '/projects/electric-meter-reading',
-            description: 'IoT tabanlı elektrik sayaçları okuma sistemi'
+            description: 'IoT tabanlı elektrik sayaçları okuma sistemi',
+            icon: <Zap className="w-5 h-5" />,
+            category: 'IoT Çözümleri',
+            price: 'Özel Fiyat',
+            path: '/projects/electric-meter-reading'
         },
         {
             name: 'Otel Yorumları Analizi',
-            path: '/projects/hotel-reviews-analysis',
-            description: 'AI destekli otel yorumları analiz platformu'
+            description: 'AI destekli otel yorumları analiz platformu',
+            icon: <Eye className="w-5 h-5" />,
+            category: 'AI Çözümleri',
+            price: 'Özel Fiyat',
+            path: '/projects/hotel-reviews-analysis'
+        },
+        {
+            name: 'Comodo Web Builder',
+            description: 'Hızlı web sitesi oluşturma platformu',
+            icon: <Globe className="w-5 h-5" />,
+            category: 'Web Teknolojileri',
+            price: 'Ücretsiz Deneme'
+        },
+        {
+            name: 'Comodo Mobile SDK',
+            description: 'Mobil uygulama geliştirme kiti',
+            icon: <Smartphone className="w-5 h-5" />,
+            category: 'Mobil Çözümler',
+            price: 'Aylık 299₺'
+        },
+        {
+            name: 'Comodo Analytics',
+            description: 'İş zekası ve veri analizi platformu',
+            icon: <LineChart className="w-5 h-5" />,
+            category: 'Veri Analitiği',
+            price: 'Aylık 199₺'
+        },
+        {
+            name: 'Comodo Security Suite',
+            description: 'Kapsamlı siber güvenlik çözümleri',
+            icon: <Shield className="w-5 h-5" />,
+            category: 'Güvenlik',
+            price: 'Aylık 499₺'
+        },
+        {
+            name: 'Comodo CRM',
+            description: 'Müşteri ilişkileri yönetim sistemi',
+            icon: <Users className="w-5 h-5" />,
+            category: 'İş Uygulamaları',
+            price: 'Aylık 149₺'
         }
-        // {
-        //     name: 'E-Ticaret Platformu',
-        //     path: '/projects/ecommerce-platform',
-        //     description: 'Özel e-ticaret çözümleri'
-        // },
-        // {
-        //     name: 'Mobil Bankacılık',
-        //     path: '/projects/mobile-banking',
-        //     description: 'Güvenli mobil bankacılık uygulaması'
-        // }
     ];
 
     return (
@@ -354,7 +406,7 @@ const ComodoWebsite = () => {
                             ))}
 
                             {/* Projects Dropdown */}
-                            <div className="relative">
+                            <div className="relative dropdown-container">
                                 <button
                                     onClick={() => setIsProjectsDropdownOpen(!isProjectsDropdownOpen)}
                                     className="flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -366,22 +418,77 @@ const ComodoWebsite = () => {
                                 {isProjectsDropdownOpen && (
                                     <div className="absolute top-full left-0 mt-2 w-80 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-2xl z-50">
                                         <div className="p-2">
-                                            {projects.map((project, index) => (
-                                                <Link
-                                                    key={index}
-                                                    to={project.path}
-                                                    className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 group"
-                                                    onClick={() => setIsProjectsDropdownOpen(false)}
-                                                >
-                                                    <div className="flex items-center justify-between">
-                                                        <div>
-                                                            <div className="font-medium">{project.name}</div>
-                                                            <div className="text-sm text-gray-500">{project.description}</div>
+                                            {projects.length > 0 ? (
+                                                projects.map((project, index) => (
+                                                    <Link
+                                                        key={index}
+                                                        to={project.path}
+                                                        className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 group"
+                                                        onClick={() => setIsProjectsDropdownOpen(false)}
+                                                    >
+                                                        <div className="flex items-center justify-between">
+                                                            <div>
+                                                                <div className="font-medium">{project.name}</div>
+                                                                <div className="text-sm text-gray-500">{project.description}</div>
+                                                            </div>
+                                                            <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                         </div>
-                                                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                    </div>
-                                                </Link>
-                                            ))}
+                                                    </Link>
+                                                ))
+                                            ) : (
+                                                <div className="px-4 py-3 text-center text-gray-500">
+                                                    <div className="text-sm">Projelerimiz artık</div>
+                                                    <div className="text-sm font-medium text-blue-600">Ürünlerimiz</div>
+                                                    <div className="text-sm">bölümünde yer alıyor</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Products Dropdown */}
+                            <div className="relative dropdown-container">
+                                <button
+                                    onClick={() => setIsProductsDropdownOpen(!isProductsDropdownOpen)}
+                                    className="flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                                >
+                                    Ürünlerimiz
+                                    <ChevronDown className={`ml-1 w-4 h-4 transition-transform duration-300 ${isProductsDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {isProductsDropdownOpen && (
+                                    <div className="absolute top-full left-0 mt-2 w-96 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-2xl z-50">
+                                        <div className="p-2">
+                                            {products.map((product, index) => {
+                                                const ProductComponent = product.path ? Link : 'div';
+                                                const productProps = product.path ? { to: product.path } : {};
+                                                
+                                                return (
+                                                    <ProductComponent
+                                                        key={index}
+                                                        {...productProps}
+                                                        className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 group cursor-pointer"
+                                                        onClick={() => setIsProductsDropdownOpen(false)}
+                                                    >
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex items-center space-x-3">
+                                                                <div className="text-blue-600 bg-blue-50 p-2 rounded-lg">
+                                                                    {product.icon}
+                                                                </div>
+                                                                <div>
+                                                                    <div className="font-medium">{product.name}</div>
+                                                                    <div className="text-sm text-gray-500">{product.description}</div>
+                                                                    <div className="text-xs text-blue-600 font-medium mt-1">
+                                                                        {product.category} • {product.price}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                        </div>
+                                                    </ProductComponent>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}
@@ -432,17 +539,58 @@ const ComodoWebsite = () => {
                                     <div className="px-4 py-2 text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Projelerimiz
                                     </div>
-                                    {projects.map((project, index) => (
-                                        <Link
-                                            key={index}
-                                            to={project.path}
-                                            className="block px-4 py-3 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
-                                            onClick={() => setIsMenuOpen(false)}
-                                        >
-                                            <div className="font-medium">{project.name}</div>
-                                            <div className="text-sm text-gray-500">{project.description}</div>
-                                        </Link>
-                                    ))}
+                                    {projects.length > 0 ? (
+                                        projects.map((project, index) => (
+                                            <Link
+                                                key={index}
+                                                to={project.path}
+                                                className="block px-4 py-3 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300"
+                                                onClick={() => setIsMenuOpen(false)}
+                                            >
+                                                <div className="font-medium">{project.name}</div>
+                                                <div className="text-sm text-gray-500">{project.description}</div>
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <div className="px-4 py-3 text-center text-gray-500">
+                                            <div className="text-sm">Projelerimiz artık</div>
+                                            <div className="text-sm font-medium text-blue-600">Ürünlerimiz</div>
+                                            <div className="text-sm">bölümünde yer alıyor</div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Mobile Products Section */}
+                                <div className="border-t border-gray-200 pt-4 mt-4">
+                                    <div className="px-4 py-2 text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                        Ürünlerimiz
+                                    </div>
+                                    {products.map((product, index) => {
+                                        const ProductComponent = product.path ? Link : 'div';
+                                        const productProps = product.path ? { to: product.path } : {};
+                                        
+                                        return (
+                                            <ProductComponent
+                                                key={index}
+                                                {...productProps}
+                                                className="block px-4 py-3 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 cursor-pointer"
+                                                onClick={() => setIsMenuOpen(false)}
+                                            >
+                                                <div className="flex items-center space-x-3">
+                                                    <div className="text-blue-600 bg-blue-50 p-2 rounded-lg">
+                                                        {product.icon}
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-medium">{product.name}</div>
+                                                        <div className="text-sm text-gray-500">{product.description}</div>
+                                                        <div className="text-xs text-blue-600 font-medium mt-1">
+                                                            {product.category} • {product.price}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ProductComponent>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -1107,6 +1255,7 @@ const App = () => {
                 <Route path="/" element={<ComodoWebsite />} />
                 <Route path="/projects/electric-meter-reading" element={<ElectricMeterReading />} />
                 <Route path="/projects/hotel-reviews-analysis" element={<HotelReviewsAnalysis />} />
+                <Route path="/projects/web-sites" element={<WebSites />} />
                 {/* <Route path="/projects/ecommerce-platform" element={<div className="min-h-screen pt-20 flex items-center justify-center"><h1 className="text-4xl">E-Ticaret Platformu - Yakında</h1></div>} /> */}
                 {/* <Route path="/projects/mobile-banking" element={<div className="min-h-screen pt-20 flex items-center justify-center"><h1 className="text-4xl">Mobil Bankacılık - Yakında</h1></div>} /> */}
             </Routes>
