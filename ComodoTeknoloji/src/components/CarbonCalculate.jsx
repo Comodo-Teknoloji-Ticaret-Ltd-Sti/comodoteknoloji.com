@@ -10,8 +10,8 @@ const CarbonCalculator = () => {
   const isAdmin = userName === "Furkan Ayakdaş" || userName === "Süreyya Armağan";
 
   // Determine hotel based on username
-  const hotelName = userName === "Furkan Ayakdaş" ? "Sherwood Exclusive Lara" : 
-                   userName === "Süreyya Armağan" ? "Greenwood Suites Resort" : 
+  const hotelName = userName === "Furkan Ayakdaş" ? "Antalya Hotel" : 
+                   userName === "Süreyya Armağan" ? "Antalya Hotel" : 
                    isAdmin ? "Admin Panel" :
                    "Hotel Not Found";
   
