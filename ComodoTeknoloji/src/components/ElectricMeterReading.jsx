@@ -33,6 +33,14 @@ const Electric = () => {
     const [error, setError] = useState('');
     const [activeTab, setActiveTab] = useState('overview');
     const [scrollY, setScrollY] = useState(0);
+    
+    // Date picker states
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [dateRange, setDateRange] = useState({
+        startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 gün önce
+        endDate: new Date().toISOString().split('T')[0] // bugün
+    });
+    const [dateFilterType, setDateFilterType] = useState('single'); // 'single' veya 'range'
 
     // AI Assistant States
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -110,6 +118,41 @@ const Electric = () => {
         }
     };
 
+    // Date filtering function
+    const filterDataByDate = (data) => {
+        if (!data || data.length === 0) return data;
+        
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (dateFilterType === 'single') {
+            // Tek tarih seçimi için basit simülasyon
+            return data.filter((item, index) => {
+                // Seçilen tarihe göre veri filtreleme simülasyonu
+                const itemDate = new Date(Date.now() - (index * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+                return itemDate === selectedDate;
+            });
+        } else {
+            // Tarih aralığı seçimi için basit simülasyon
+            const startTime = new Date(dateRange.startDate).getTime();
+            const endTime = new Date(dateRange.endDate).getTime();
+            
+            return data.filter((item, index) => {
+                const itemTime = new Date(Date.now() - (index * 24 * 60 * 60 * 1000)).getTime();
+                return itemTime >= startTime && itemTime <= endTime;
+            });
+        }
+    };
+
+    const handleDateFilterChange = (type, value) => {
+        if (type === 'single') {
+            setSelectedDate(value);
+        } else if (type === 'startDate') {
+            setDateRange(prev => ({ ...prev, startDate: value }));
+        } else if (type === 'endDate') {
+            setDateRange(prev => ({ ...prev, endDate: value }));
+        }
+    };
+
     // Sample data for demonstration
 
 
@@ -153,7 +196,8 @@ const Electric = () => {
         const data = labels.map(label => {
             const values = grouped[label];
             const sum = values.reduce((acc, val) => acc + val, 0);
-            return (sum / values.length).toFixed(2);
+            const avgWatt = sum / values.length;
+            return convertWattToKwh(avgWatt).toFixed(2);
         });
 
         return { labels, data };
@@ -163,6 +207,24 @@ const Electric = () => {
         return devices
             .filter(d => d.anlikGuc !== null)
             .reduce((sum, d) => sum + d.anlikGuc, 0);
+    };
+
+    // Watt'ı KWh'a çeviren fonksiyon
+    const convertWattToKwh = (wattValue, hours = 24) => {
+        // 1 KWh = 1000 Watt * 1 saat
+        // Günlük tüketim için 24 saat varsayıyoruz
+        return (wattValue * hours) / 1000;
+    };
+
+    const formatPowerValue = (value, unit = 'kWh') => {
+        if (unit === 'kWh') {
+            const kwhValue = convertWattToKwh(value);
+            if (kwhValue >= 1000) {
+                return (kwhValue / 1000).toFixed(2) + ' MWh';
+            }
+            return kwhValue.toFixed(2) + ' kWh';
+        }
+        return value.toLocaleString() + ' W';
     };
 
     const generateColors = (count) => {
@@ -291,7 +353,7 @@ const Electric = () => {
                         size: 11
                     },
                     callback: function (value) {
-                        return value + ' W';
+                        return value + ' kWh';
                     }
                 }
             },
@@ -347,7 +409,8 @@ const Electric = () => {
                 callbacks: {
                     label: function (context) {
                         const percentage = ((context.parsed / context.dataset.data.reduce((a, b) => a + b, 0)) * 100).toFixed(1);
-                        return `${context.label}: ${context.parsed.toLocaleString()} W (${percentage}%)`;
+                        const kwhValue = convertWattToKwh(context.parsed);
+                        return `${context.label}: ${kwhValue.toFixed(2)} kWh (${percentage}%)`;
                     }
                 }
             }
@@ -399,17 +462,22 @@ const Electric = () => {
     const gsrDevices = data.filter(d => d.cihazAdi.startsWith('Kemer'));
     const selDevices = data.filter(d => d.cihazAdi.startsWith('Lara'));
 
-    const gsrChart = groupAndAverageByDevice(gsrDevices);
-    const selChart = groupAndAverageByDevice(selDevices);
+    // Tarih filtreleme uygula
+    const filteredData = filterDataByDate(data);
+    const filteredGsrDevices = filterDataByDate(gsrDevices);
+    const filteredSelDevices = filterDataByDate(selDevices);
 
-    const gsrTotal = getTotalConsumption(gsrDevices);
-    const selTotal = getTotalConsumption(selDevices);
+    const gsrChart = groupAndAverageByDevice(filteredGsrDevices.length > 0 ? filteredGsrDevices : gsrDevices);
+    const selChart = groupAndAverageByDevice(filteredSelDevices.length > 0 ? filteredSelDevices : selDevices);
+
+    const gsrTotal = getTotalConsumption(filteredGsrDevices.length > 0 ? filteredGsrDevices : gsrDevices);
+    const selTotal = getTotalConsumption(filteredSelDevices.length > 0 ? filteredSelDevices : selDevices);
 
     const comparisonData = {
         labels: ['Lara Otel', 'Kemer Otel'],
         datasets: [{
-            label: 'Toplam Güç Tüketimi (W)',
-            data: [gsrTotal, selTotal],
+            label: 'Toplam Güç Tüketimi (kWh)',
+            data: [convertWattToKwh(gsrTotal), convertWattToKwh(selTotal)],
             backgroundColor: [
                 'rgba(75, 192, 192, 0.8)',
                 'rgba(255, 99, 132, 0.8)'
@@ -445,12 +513,13 @@ const Electric = () => {
     };
 
     // Pie chart data for first 20 devices
+    const displayData = filteredData.length > 0 ? filteredData : data;
     const pieData = {
-        labels: data.slice(0, 20).map(d => d.cihazAdi),
+        labels: displayData.slice(0, 20).map(d => d.cihazAdi),
         datasets: [{
-            data: data.slice(0, 20).map(d => d.anlikGuc),
-            backgroundColor: generateColors(Math.min(data.length, 20)),
-            borderColor: generateColors(Math.min(data.length, 20)).map(color => color.replace('0.8', '1')),
+            data: displayData.slice(0, 20).map(d => d.anlikGuc),
+            backgroundColor: generateColors(Math.min(displayData.length, 20)),
+            borderColor: generateColors(Math.min(displayData.length, 20)).map(color => color.replace('0.8', '1')),
             borderWidth: 2
         }]
     };
@@ -520,7 +589,7 @@ const Electric = () => {
                             </div>
                             <div className="ml-3 sm:ml-4">
                                 <p className="text-xs sm:text-sm font-medium text-gray-500">Lara Otel</p>
-                                <p className="text-lg sm:text-2xl font-bold text-blue-600">{gsrTotal.toLocaleString()} W</p>
+                                <p className="text-lg sm:text-2xl font-bold text-blue-600">{formatPowerValue(gsrTotal)}</p>
                             </div>
                         </div>
                     </div>
@@ -532,7 +601,7 @@ const Electric = () => {
                             </div>
                             <div className="ml-3 sm:ml-4">
                                 <p className="text-xs sm:text-sm font-medium text-gray-500">Kemer Otel</p>
-                                <p className="text-lg sm:text-2xl font-bold text-pink-600">{selTotal.toLocaleString()} W</p>
+                                <p className="text-lg sm:text-2xl font-bold text-pink-600">{formatPowerValue(selTotal)}</p>
                             </div>
                         </div>
                     </div>
@@ -544,9 +613,134 @@ const Electric = () => {
                             </div>
                             <div className="ml-3 sm:ml-4">
                                 <p className="text-xs sm:text-sm font-medium text-gray-500">Toplam Güç</p>
-                                <p className="text-lg sm:text-2xl font-bold text-purple-600">{(gsrTotal + selTotal).toLocaleString()} W</p>
+                                <p className="text-lg sm:text-2xl font-bold text-purple-600">{formatPowerValue(gsrTotal + selTotal)}</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Date Picker Section */}
+                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div className="flex items-center space-x-2">
+                            <span className="text-lg">📅</span>
+                            <h3 className="text-lg font-semibold text-gray-800">Tarih Filtresi</h3>
+                        </div>
+                        
+                        <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
+                            {/* Filter Type Toggle */}
+                            <div className="flex bg-gray-100 rounded-lg p-1">
+                                <button
+                                    onClick={() => setDateFilterType('single')}
+                                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                        dateFilterType === 'single'
+                                            ? 'bg-blue-500 text-white'
+                                            : 'text-gray-600 hover:text-gray-800'
+                                    }`}
+                                >
+                                    Tek Tarih
+                                </button>
+                                <button
+                                    onClick={() => setDateFilterType('range')}
+                                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                        dateFilterType === 'range'
+                                            ? 'bg-blue-500 text-white'
+                                            : 'text-gray-600 hover:text-gray-800'
+                                    }`}
+                                >
+                                    Tarih Aralığı
+                                </button>
+                            </div>
+
+                            {/* Date Inputs */}
+                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                                {dateFilterType === 'single' ? (
+                                    <div className="flex flex-col">
+                                        <label className="text-xs text-gray-600 mb-1">Tarih Seç</label>
+                                        <input
+                                            type="date"
+                                            value={selectedDate}
+                                            onChange={(e) => handleDateFilterChange('single', e.target.value)}
+                                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                        />
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="flex flex-col">
+                                            <label className="text-xs text-gray-600 mb-1">Başlangıç Tarihi</label>
+                                            <input
+                                                type="date"
+                                                value={dateRange.startDate}
+                                                onChange={(e) => handleDateFilterChange('startDate', e.target.value)}
+                                                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <label className="text-xs text-gray-600 mb-1">Bitiş Tarihi</label>
+                                            <input
+                                                type="date"
+                                                value={dateRange.endDate}
+                                                onChange={(e) => handleDateFilterChange('endDate', e.target.value)}
+                                                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                            />
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Quick Date Buttons */}
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    onClick={() => {
+                                        const today = new Date().toISOString().split('T')[0];
+                                        setSelectedDate(today);
+                                        setDateFilterType('single');
+                                    }}
+                                    className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-xs font-medium hover:bg-blue-200 transition-colors duration-200"
+                                >
+                                    Bugün
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const today = new Date();
+                                        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                        setDateRange({
+                                            startDate: weekAgo.toISOString().split('T')[0],
+                                            endDate: today.toISOString().split('T')[0]
+                                        });
+                                        setDateFilterType('range');
+                                    }}
+                                    className="px-3 py-1 bg-green-100 text-green-700 rounded-md text-xs font-medium hover:bg-green-200 transition-colors duration-200"
+                                >
+                                    Son 7 Gün
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const today = new Date();
+                                        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+                                        setDateRange({
+                                            startDate: monthAgo.toISOString().split('T')[0],
+                                            endDate: today.toISOString().split('T')[0]
+                                        });
+                                        setDateFilterType('range');
+                                    }}
+                                    className="px-3 py-1 bg-purple-100 text-purple-700 rounded-md text-xs font-medium hover:bg-purple-200 transition-colors duration-200"
+                                >
+                                    Son 30 Gün
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Date Filter Info */}
+                    <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">
+                            <span className="font-medium">Aktif Filtre:</span> {' '}
+                            {dateFilterType === 'single' 
+                                ? `${new Date(selectedDate).toLocaleDateString('tr-TR')} tarihli veriler`
+                                : `${new Date(dateRange.startDate).toLocaleDateString('tr-TR')} - ${new Date(dateRange.endDate).toLocaleDateString('tr-TR')} arasındaki veriler`
+                            }
+                        </p>
                     </div>
                 </div>
 
@@ -658,7 +852,7 @@ const Electric = () => {
                                 <Bar data={{
                                     labels: gsrChart.labels,
                                     datasets: [{
-                                        label: 'Ortalama Anlık Güç (W)',
+                                        label: 'Ortalama Günlük Tüketim (kWh)',
                                         data: gsrChart.data,
                                         backgroundColor: generateColors(gsrChart.labels.length),
                                         borderColor: generateColors(gsrChart.labels.length).map(color => color.replace('0.8', '1')),
@@ -676,7 +870,7 @@ const Electric = () => {
                                 <Bar data={{
                                     labels: selChart.labels,
                                     datasets: [{
-                                        label: 'Ortalama Anlık Güç (W)',
+                                        label: 'Ortalama Günlük Tüketim (kWh)',
                                         data: selChart.data,
                                         backgroundColor: generateColors(selChart.labels.length),
                                         borderColor: generateColors(selChart.labels.length).map(color => color.replace('0.8', '1')),
@@ -747,10 +941,10 @@ const Electric = () => {
                                                 Akım (A)
                                             </th>
                                             <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Anlık Güç (W)
+                                                Günlük Tüketim (kWh)
                                             </th>
                                             <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                                                Toplam Tüketim (W)
+                                                Toplam Günlük Tüketim (kWh)
                                             </th>
                                             <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
                                                 Son Güncelleme
@@ -758,7 +952,7 @@ const Electric = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {data.slice(0, 20).map((device, index) => (
+                                        {displayData.slice(0, 20).map((device, index) => (
                                             <tr key={device.cihazId} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                                 <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                                                     <div className="flex items-center">
@@ -780,15 +974,15 @@ const Electric = () => {
                                                     {device.akimlar}
                                                 </td>
                                                 <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-semibold text-gray-900">
-                                                    <span className={`px-2 py-1 rounded-full text-xs ${device.anlikGuc > 50000 ? 'bg-red-100 text-red-800' :
-                                                        device.anlikGuc > 30000 ? 'bg-yellow-100 text-yellow-800' :
+                                                    <span className={`px-2 py-1 rounded-full text-xs ${convertWattToKwh(device.anlikGuc) > 50 ? 'bg-red-100 text-red-800' :
+                                                        convertWattToKwh(device.anlikGuc) > 30 ? 'bg-yellow-100 text-yellow-800' :
                                                             'bg-green-100 text-green-800'
                                                         }`}>
-                                                        {device.anlikGuc.toLocaleString()} W
+                                                        {convertWattToKwh(device.anlikGuc).toFixed(2)} kWh
                                                     </span>
                                                 </td>
                                                 <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden md:table-cell">
-                                                    {device.toplamTuketim.toLocaleString()} W
+                                                    {convertWattToKwh(device.toplamTuketim).toFixed(2)} kWh
                                                 </td>
                                                 <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden xl:table-cell">
                                                     {device.calismaSaati}
@@ -808,7 +1002,7 @@ const Electric = () => {
                                     <div className="text-xl sm:text-2xl text-blue-600">📊</div>
                                     <div className="ml-3 sm:ml-4">
                                         <p className="text-xs sm:text-sm font-medium text-gray-500">Toplam Cihaz</p>
-                                        <p className="text-lg sm:text-2xl font-bold text-gray-900">{data.length}</p>
+                                        <p className="text-lg sm:text-2xl font-bold text-gray-900">{displayData.length}</p>
                                     </div>
                                 </div>
                             </div>
@@ -817,9 +1011,9 @@ const Electric = () => {
                                 <div className="flex items-center">
                                     <div className="text-xl sm:text-2xl text-green-600">📈</div>
                                     <div className="ml-3 sm:ml-4">
-                                        <p className="text-xs sm:text-sm font-medium text-gray-500">Ortalama Tüketim</p>
+                                        <p className="text-xs sm:text-sm font-medium text-gray-500">Ortalama Günlük Tüketim</p>
                                         <p className="text-sm sm:text-2xl font-bold text-gray-900">
-                                            {(data.reduce((sum, d) => sum + d.anlikGuc, 0) / data.length).toLocaleString()} W
+                                            {displayData.length > 0 ? (convertWattToKwh(displayData.reduce((sum, d) => sum + d.anlikGuc, 0) / displayData.length)).toFixed(2) : '0'} kWh
                                         </p>
                                     </div>
                                 </div>
@@ -829,9 +1023,9 @@ const Electric = () => {
                                 <div className="flex items-center">
                                     <div className="text-xl sm:text-2xl text-red-600">🔥</div>
                                     <div className="ml-3 sm:ml-4">
-                                        <p className="text-xs sm:text-sm font-medium text-gray-500">En Yüksek Tüketim</p>
+                                        <p className="text-xs sm:text-sm font-medium text-gray-500">En Yüksek Günlük Tüketim</p>
                                         <p className="text-sm sm:text-2xl font-bold text-gray-900">
-                                            {Math.max(...data.map(d => d.anlikGuc)).toLocaleString()} W
+                                            {displayData.length > 0 ? convertWattToKwh(Math.max(...displayData.map(d => d.anlikGuc))).toFixed(2) : '0'} kWh
                                         </p>
                                     </div>
                                 </div>
@@ -841,9 +1035,9 @@ const Electric = () => {
                                 <div className="flex items-center">
                                     <div className="text-xl sm:text-2xl text-blue-600">❄️</div>
                                     <div className="ml-3 sm:ml-4">
-                                        <p className="text-xs sm:text-sm font-medium text-gray-500">En Düşük Tüketim</p>
+                                        <p className="text-xs sm:text-sm font-medium text-gray-500">En Düşük Günlük Tüketim</p>
                                         <p className="text-sm sm:text-2xl font-bold text-gray-900">
-                                            {Math.min(...data.map(d => d.anlikGuc)).toLocaleString()} W
+                                            {displayData.length > 0 ? convertWattToKwh(Math.min(...displayData.map(d => d.anlikGuc))).toFixed(2) : '0'} kWh
                                         </p>
                                     </div>
                                 </div>
@@ -856,7 +1050,7 @@ const Electric = () => {
             {/* AI Assistant Chat */}
             {
                 isChatOpen && (
-                    <div className={`fixed bottom-4 right-20 z-[200] transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'
+                    <div className={`fixed bottom-4 right-4 z-[200] transition-all duration-300 ${isMinimized ? 'w-80 h-16' : 'w-80 h-96'
                         } bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden`}>
                         <div className="h-full flex flex-col">
                             {/* Chat Header */}
@@ -953,7 +1147,7 @@ const Electric = () => {
                 !isChatOpen && (
                     <button
                         onClick={() => setIsChatOpen(true)}
-                        className="fixed bottom-4 right-20 z-[200] w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center"
+                        className="fixed bottom-4 right-4 z-[200] w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center"
                     >
                         <Bot className="w-6 h-6" />
                     </button>

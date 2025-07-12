@@ -359,157 +359,157 @@ const ComodoWebsite = () => {
                 </div>
             </div>
 
-            {/* Header - Geçici olarak devre dışı bırakıldı */}
-            {false && (
-                <header className={`fixed w-full z-50 transition-all duration-500 ${scrollY > 50 ? 'bg-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-lg' : 'bg-transparent'}`}>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between items-center h-20">
-                            <div className="flex items-center space-x-3">
-                                <div className="relative">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur opacity-75"></div>
-                                    <div className="relative bg-white text-white p-2 rounded-xl">
-                                        <img src="./ComodoTeknoloji.png" alt="Comodo Teknoloji" className="w-12 h-12 rounded-xl" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                        Comodo
-                                    </h1>
-                                    <p className="text-xs text-gray-500 -mt-1">Teknoloji</p>
+            {/* Header */}
+            <header className={`fixed w-full z-50 transition-all duration-500 ${scrollY > 50 ? 'bg-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-lg' : 'bg-transparent'}`}>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center h-20">
+                        <div className="flex items-center space-x-3">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur opacity-75"></div>
+                                <div className="relative bg-white text-white p-2 rounded-xl">
+                                    <img src="./ComodoTeknoloji.png" alt="Comodo Teknoloji" className="w-12 h-12 rounded-xl" />
                                 </div>
                             </div>
-
-                            {/* Desktop Navigation */}
-                            <nav className="hidden md:flex space-x-1">
-                                {[{
-                                    name: 'Ana Sayfa',
-                                    id: 'home'
-                                }, {
-                                    name: 'Çözümler',
-                                    id: 'services'
-                                }, {
-                                    name: 'Başarı Hikayeleri',
-                                    id: 'success'
-                                }, {
-                                    name: 'İletişim',
-                                    id: 'contact'
-                                }].map((item) => (
-                                    <button
-                                        key={item.name}
-                                        onClick={() => scrollToSection(item.id)}
-                                        className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${activeSection === item.id
-                                            ? 'bg-blue-100 text-blue-600 backdrop-blur-sm'
-                                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                                            }`}
-                                    >
-                                        {item.name}
-                                    </button>
-                                ))}
-
-                                {/* Projects Dropdown */}
-                                <div className="relative dropdown-container">
-                                    <button
-                                        onClick={() => setIsProjectsDropdownOpen(!isProjectsDropdownOpen)}
-                                        className="flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                                    >
-                                        Projelerimiz
-                                        <ChevronDown className={`ml-1 w-4 h-4 transition-transform duration-300 ${isProjectsDropdownOpen ? 'rotate-180' : ''}`} />
-                                    </button>
-
-                                    {isProjectsDropdownOpen && (
-                                        <div className="absolute top-full left-0 mt-2 w-80 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-2xl z-50">
-                                            <div className="p-2">
-                                                {projects.length > 0 ? (
-                                                    projects.map((project, index) => (
-                                                        <Link
-                                                            key={index}
-                                                            to={project.path}
-                                                            className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 group"
-                                                            onClick={() => setIsProjectsDropdownOpen(false)}
-                                                        >
-                                                            <div className="flex items-center justify-between">
-                                                                <div>
-                                                                    <div className="font-medium">{project.name}</div>
-                                                                    <div className="text-sm text-gray-500">{project.description}</div>
-                                                                </div>
-                                                                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                            </div>
-                                                        </Link>
-                                                    ))
-                                                ) : (
-                                                    <div className="px-4 py-3 text-center text-gray-500">
-                                                        <div className="text-sm">Projelerimiz artık</div>
-                                                        <div className="text-sm font-medium text-blue-600">Ürünlerimiz</div>
-                                                        <div className="text-sm">bölümünde yer alıyor</div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Products Dropdown */}
-                                <div className="relative dropdown-container">
-                                    <button
-                                        onClick={() => setIsProductsDropdownOpen(!isProductsDropdownOpen)}
-                                        className="flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                                    >
-                                        Ürünlerimiz
-                                        <ChevronDown className={`ml-1 w-4 h-4 transition-transform duration-300 ${isProductsDropdownOpen ? 'rotate-180' : ''}`} />
-                                    </button>
-
-                                    {isProductsDropdownOpen && (
-                                        <div className="absolute top-full left-0 mt-2 w-96 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-2xl z-50">
-                                            <div className="p-2">
-                                                {products.map((product, index) => {
-                                                    const ProductComponent = product.path ? Link : 'div';
-                                                    const productProps = product.path ? { to: product.path } : {};
-                                                    
-                                                    return (
-                                                        <ProductComponent
-                                                            key={index}
-                                                            {...productProps}
-                                                            className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 group cursor-pointer"
-                                                            onClick={() => setIsProductsDropdownOpen(false)}
-                                                        >
-                                                            <div className="flex items-center justify-between">
-                                                                <div className="flex items-center space-x-3">
-                                                                    <div className="text-blue-600 bg-blue-50 p-2 rounded-lg">
-                                                                        {product.icon}
-                                                                    </div>
-                                                                    <div>
-                                                                        <div className="font-medium">{product.name}</div>
-                                                                        <div className="text-sm text-gray-500">{product.description}</div>
-                                                                        <div className="text-xs text-blue-600 font-medium mt-1">
-                                                                            {product.category} • {product.price}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                                            </div>
-                                                        </ProductComponent>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </nav>
-
-                            {/* Mobile menu button */}
-                            <div className="md:hidden">
-                                <button
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                    className="p-2 rounded-xl bg-gray-100 backdrop-blur-sm border border-gray-200"
-                                >
-                                    {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                                </button>
+                            <div>
+                                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                    Comodo
+                                </h1>
+                                <p className="text-xs text-gray-500 -mt-1">Teknoloji</p>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Mobile Navigation */}
-                    {isMenuOpen && (
+                        {/* Desktop Navigation */}
+                        <nav className="hidden md:flex space-x-1">
+                            {[{
+                                name: 'Ana Sayfa',
+                                id: 'home'
+                            }, {
+                                name: 'Çözümler',
+                                id: 'services'
+                            }, {
+                                name: 'Başarı Hikayeleri',
+                                id: 'success'
+                            }, {
+                                name: 'İletişim',
+                                id: 'contact'
+                            }].map((item) => (
+                                <button
+                                    key={item.name}
+                                    onClick={() => scrollToSection(item.id)}
+                                    className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${activeSection === item.id
+                                        ? 'bg-blue-100 text-blue-600 backdrop-blur-sm'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                        }`}
+                                >
+                                    {item.name}
+                                </button>
+                            ))}
+
+                            {/* Projects Dropdown */}
+                            <div className="relative dropdown-container">
+                                <button
+                                    onClick={() => setIsProjectsDropdownOpen(!isProjectsDropdownOpen)}
+                                    className="flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                                >
+                                    Projelerimiz
+                                    <ChevronDown className={`ml-1 w-4 h-4 transition-transform duration-300 ${isProjectsDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {isProjectsDropdownOpen && (
+                                    <div className="absolute top-full left-0 mt-2 w-80 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-2xl z-50">
+                                        <div className="p-2">
+                                            {projects.length > 0 ? (
+                                                projects.map((project, index) => (
+                                                    <Link
+                                                        key={index}
+                                                        to={project.path}
+                                                        className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 group"
+                                                        onClick={() => setIsProjectsDropdownOpen(false)}
+                                                    >
+                                                        <div className="flex items-center justify-between">
+                                                            <div>
+                                                                <div className="font-medium">{project.name}</div>
+                                                                <div className="text-sm text-gray-500">{project.description}</div>
+                                                            </div>
+                                                            <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                        </div>
+                                                    </Link>
+                                                ))
+                                            ) : (
+                                                <div className="px-4 py-3 text-center text-gray-500">
+                                                    <div className="text-sm">Projelerimiz artık</div>
+                                                    <div className="text-sm font-medium text-blue-600">Ürünlerimiz</div>
+                                                    <div className="text-sm">bölümünde yer alıyor</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Products Dropdown */}
+                            <div className="relative dropdown-container">
+                                <button
+                                    onClick={() => setIsProductsDropdownOpen(!isProductsDropdownOpen)}
+                                    className="flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-300 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                                >
+                                    Ürünlerimiz
+                                    <ChevronDown className={`ml-1 w-4 h-4 transition-transform duration-300 ${isProductsDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {isProductsDropdownOpen && (
+                                    <div className="absolute top-full left-0 mt-2 w-96 bg-white/95 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-2xl z-50">
+                                        <div className="p-2">
+                                            {products.map((product, index) => {
+                                                const ProductComponent = product.path ? Link : 'div';
+                                                const productProps = product.path ? { to: product.path } : {};
+                                                
+                                                return (
+                                                    <ProductComponent
+                                                        key={index}
+                                                        {...productProps}
+                                                        className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 group cursor-pointer"
+                                                        onClick={() => setIsProductsDropdownOpen(false)}
+                                                    >
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex items-center space-x-3">
+                                                                <div className="text-blue-600 bg-blue-50 p-2 rounded-lg">
+                                                                    {product.icon}
+                                                                </div>
+                                                                <div>
+                                                                    <div className="font-medium">{product.name}</div>
+                                                                    <div className="text-sm text-gray-500">{product.description}</div>
+                                                                    <div className="text-xs text-blue-600 font-medium mt-1">
+                                                                        {product.category} • {product.price}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                        </div>
+                                                    </ProductComponent>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </nav>
+
+                        {/* Mobile menu button */}
+                        <div className="md:hidden">
+                            <button
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="p-2 rounded-xl bg-gray-100 backdrop-blur-sm border border-gray-200"
+                            >
+                                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile Navigation */}
+                {
+                    isMenuOpen && (
                         <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-gray-200/50">
                             <div className="px-4 py-6 space-y-2">
                                 {[{
@@ -595,8 +595,7 @@ const ComodoWebsite = () => {
                             </div>
                         </div>
                     )}
-                </header>
-            )}
+            </header>
 
             {/* Hero Section */}
             <section id="home" className="relative min-h-screen flex items-center justify-center pt-20">
@@ -1253,9 +1252,7 @@ const App = () => {
     return (
         <Router>
             <Routes>
-                {/* Geçici olarak sayaç sayfası ana sayfa olarak ayarlandı */}
-                <Route path="/" element={<ElectricMeterReading />} />
-                <Route path="/home" element={<ComodoWebsite />} />
+                <Route path="/" element={<ComodoWebsite />} />
                 <Route path="/projects/electric-meter-reading" element={<ElectricMeterReading />} />
                 <Route path="/projects/hotel-reviews-analysis" element={<HotelReviewsAnalysis />} />
                 <Route path="/projects/web-sites" element={<WebSites />} />
