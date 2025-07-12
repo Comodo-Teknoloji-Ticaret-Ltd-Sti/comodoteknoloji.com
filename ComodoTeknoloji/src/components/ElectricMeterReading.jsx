@@ -34,13 +34,13 @@ const Electric = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [scrollY, setScrollY] = useState(0);
     
-    // Date picker states
+    // Date picker states - Varsayılan olarak haftalık veri gösterimi
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [dateRange, setDateRange] = useState({
         startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 gün önce
         endDate: new Date().toISOString().split('T')[0] // bugün
     });
-    const [dateFilterType, setDateFilterType] = useState('single'); // 'single' veya 'range'
+    const [dateFilterType, setDateFilterType] = useState('range'); // Varsayılan olarak haftalık aralık
 
     // AI Assistant States
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -122,24 +122,36 @@ const Electric = () => {
     const filterDataByDate = (data) => {
         if (!data || data.length === 0) return data;
         
-        const today = new Date().toISOString().split('T')[0];
-        
-        if (dateFilterType === 'single') {
-            // Tek tarih seçimi için basit simülasyon
-            return data.filter((item, index) => {
-                // Seçilen tarihe göre veri filtreleme simülasyonu
-                const itemDate = new Date(Date.now() - (index * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
-                return itemDate === selectedDate;
-            });
-        } else {
-            // Tarih aralığı seçimi için basit simülasyon
-            const startTime = new Date(dateRange.startDate).getTime();
-            const endTime = new Date(dateRange.endDate).getTime();
-            
-            return data.filter((item, index) => {
-                const itemTime = new Date(Date.now() - (index * 24 * 60 * 60 * 1000)).getTime();
-                return itemTime >= startTime && itemTime <= endTime;
-            });
+        try {
+            if (dateFilterType === 'single') {
+                // Tek tarih seçimi için - seçilen tarihe göre filtreleme
+                const selectedDateObj = new Date(selectedDate);
+                
+                return data.filter(item => {
+                    if (item.calismaSaati) {
+                        // calismaSaati formatı: "2025-06-11 12:17:45"
+                        const itemDate = new Date(item.calismaSaati.split(' ')[0]);
+                        return itemDate.toDateString() === selectedDateObj.toDateString();
+                    }
+                    return false; // Tarih bilgisi yoksa dahil etme
+                });
+            } else {
+                // Tarih aralığı seçimi için filtreleme
+                const startDate = new Date(dateRange.startDate);
+                const endDate = new Date(dateRange.endDate);
+                
+                return data.filter(item => {
+                    if (item.calismaSaati) {
+                        // calismaSaati formatı: "2025-06-11 12:17:45"
+                        const itemDate = new Date(item.calismaSaati.split(' ')[0]);
+                        return itemDate >= startDate && itemDate <= endDate;
+                    }
+                    return false; // Tarih bilgisi yoksa dahil etme
+                });
+            }
+        } catch (error) {
+            console.error('Tarih filtreleme hatası:', error);
+            return data; // Hata durumunda tüm veriyi döndür
         }
     };
 
@@ -164,12 +176,20 @@ const Electric = () => {
                 // JSON dosyasını fetch ile okuma
                 const response = await fetch('/data/energy-data.json');
                 if (!response.ok) {
-                    throw new Error('JSON dosyası yüklenemedi');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const jsonData = await response.json();
-                setData(jsonData);
+                
+                // Veri kontrolü
+                if (jsonData && Array.isArray(jsonData) && jsonData.length > 0) {
+                    setData(jsonData);
+                    console.log('Veri başarıyla yüklendi:', jsonData.length, 'adet kayıt');
+                } else {
+                    throw new Error('JSON dosyası boş veya hatalı format');
+                }
 
             } catch (err) {
+                console.error('Veri yükleme hatası:', err);
                 setError('Veri yüklenirken hata oluştu: ' + err.message);
             } finally {
                 setLoading(false);
@@ -459,19 +479,30 @@ const Electric = () => {
         );
     }
 
-    const gsrDevices = data.filter(d => d.cihazAdi.startsWith('Kemer'));
-    const selDevices = data.filter(d => d.cihazAdi.startsWith('Lara'));
+    const gsrDevices = data.filter(d => d.cihazAdi.startsWith('Lara'));
+    const selDevices = data.filter(d => d.cihazAdi.startsWith('Kemer'));
 
     // Tarih filtreleme uygula
     const filteredData = filterDataByDate(data);
     const filteredGsrDevices = filterDataByDate(gsrDevices);
     const filteredSelDevices = filterDataByDate(selDevices);
 
-    const gsrChart = groupAndAverageByDevice(filteredGsrDevices.length > 0 ? filteredGsrDevices : gsrDevices);
-    const selChart = groupAndAverageByDevice(filteredSelDevices.length > 0 ? filteredSelDevices : selDevices);
+    const gsrChart = groupAndAverageByDevice(filteredGsrDevices);
+    const selChart = groupAndAverageByDevice(filteredSelDevices);
 
-    const gsrTotal = getTotalConsumption(filteredGsrDevices.length > 0 ? filteredGsrDevices : gsrDevices);
-    const selTotal = getTotalConsumption(filteredSelDevices.length > 0 ? filteredSelDevices : selDevices);
+    const gsrTotal = getTotalConsumption(filteredGsrDevices);
+    const selTotal = getTotalConsumption(filteredSelDevices);
+
+    // Debug bilgisi
+    console.log('Toplam veri sayısı:', data.length);
+    console.log('Filtrelenmiş veri sayısı:', filteredData.length);
+    console.log('Lara cihazları:', gsrDevices.length);
+    console.log('Kemer cihazları:', selDevices.length);
+    console.log('Filtrelenmiş Lara cihazları:', filteredGsrDevices.length);
+    console.log('Filtrelenmiş Kemer cihazları:', filteredSelDevices.length);
+    console.log('Aktif filtre tipi:', dateFilterType);
+    console.log('Seçilen tarih:', selectedDate);
+    console.log('Tarih aralığı:', dateRange);
 
     const comparisonData = {
         labels: ['Lara Otel', 'Kemer Otel'],
@@ -513,7 +544,7 @@ const Electric = () => {
     };
 
     // Pie chart data for first 20 devices
-    const displayData = filteredData.length > 0 ? filteredData : data;
+    const displayData = filteredData;
     const pieData = {
         labels: displayData.slice(0, 20).map(d => d.cihazAdi),
         datasets: [{
@@ -589,7 +620,9 @@ const Electric = () => {
                             </div>
                             <div className="ml-3 sm:ml-4">
                                 <p className="text-xs sm:text-sm font-medium text-gray-500">Lara Otel</p>
-                                <p className="text-lg sm:text-2xl font-bold text-blue-600">{formatPowerValue(gsrTotal)}</p>
+                                <p className="text-lg sm:text-2xl font-bold text-blue-600">
+                                    {gsrTotal > 0 ? formatPowerValue(gsrTotal) : '0.00 kWh'}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -601,7 +634,9 @@ const Electric = () => {
                             </div>
                             <div className="ml-3 sm:ml-4">
                                 <p className="text-xs sm:text-sm font-medium text-gray-500">Kemer Otel</p>
-                                <p className="text-lg sm:text-2xl font-bold text-pink-600">{formatPowerValue(selTotal)}</p>
+                                <p className="text-lg sm:text-2xl font-bold text-pink-600">
+                                    {selTotal > 0 ? formatPowerValue(selTotal) : '0.00 kWh'}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -613,7 +648,9 @@ const Electric = () => {
                             </div>
                             <div className="ml-3 sm:ml-4">
                                 <p className="text-xs sm:text-sm font-medium text-gray-500">Toplam Güç</p>
-                                <p className="text-lg sm:text-2xl font-bold text-purple-600">{formatPowerValue(gsrTotal + selTotal)}</p>
+                                <p className="text-lg sm:text-2xl font-bold text-purple-600">
+                                    {(gsrTotal + selTotal) > 0 ? formatPowerValue(gsrTotal + selTotal) : '0.00 kWh'}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -712,7 +749,7 @@ const Electric = () => {
                                     }}
                                     className="px-3 py-1 bg-green-100 text-green-700 rounded-md text-xs font-medium hover:bg-green-200 transition-colors duration-200"
                                 >
-                                    Son 7 Gün
+                                    Bu Hafta
                                 </button>
                                 <button
                                     onClick={() => {
@@ -726,7 +763,7 @@ const Electric = () => {
                                     }}
                                     className="px-3 py-1 bg-purple-100 text-purple-700 rounded-md text-xs font-medium hover:bg-purple-200 transition-colors duration-200"
                                 >
-                                    Son 30 Gün
+                                    Bu Ay
                                 </button>
                             </div>
                         </div>
@@ -737,8 +774,8 @@ const Electric = () => {
                         <p className="text-sm text-gray-600">
                             <span className="font-medium">Aktif Filtre:</span> {' '}
                             {dateFilterType === 'single' 
-                                ? `${new Date(selectedDate).toLocaleDateString('tr-TR')} tarihli veriler`
-                                : `${new Date(dateRange.startDate).toLocaleDateString('tr-TR')} - ${new Date(dateRange.endDate).toLocaleDateString('tr-TR')} arasındaki veriler`
+                                ? `${new Date(selectedDate).toLocaleDateString('tr-TR')} tarihli veriler (${filteredData.length} adet kayıt)`
+                                : `${new Date(dateRange.startDate).toLocaleDateString('tr-TR')} - ${new Date(dateRange.endDate).toLocaleDateString('tr-TR')} arasındaki veriler (${filteredData.length} adet kayıt)`
                             }
                         </p>
                     </div>
