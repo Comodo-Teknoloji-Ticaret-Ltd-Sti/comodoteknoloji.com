@@ -3,6 +3,7 @@ import { ChevronRight, Code, Globe, Smartphone, Database, Shield, Users, Award, 
 import { HashRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import ElectricMeterReading from './ElectricMeterReading';
 import HotelReviewsAnalysis from './HotelReviewsAnalysis';
+import OtelComments from './OtelComments';
 import WebSites from './WebSites';
 import CarbonCalculate from './CarbonCalculate';
 
@@ -1257,6 +1258,7 @@ const App = () => {
                 {/* Geçici olarak sayaç sayfası ana sayfa olarak ayarlandı */}
                 <Route path="/" element={<ElectricMeterReading />} />
                 <Route path="/carbon-footprint" element={<CarbonCalculate />} />
+                <Route path="/hotel-reviews" element={<OtelComments />} />
                 <Route path="/home" element={<ComodoWebsite />} />
                 <Route path="/projects/electric-meter-reading" element={<ElectricMeterReading />} />
                 <Route path="/projects/hotel-reviews-analysis" element={<HotelReviewsAnalysis />} />

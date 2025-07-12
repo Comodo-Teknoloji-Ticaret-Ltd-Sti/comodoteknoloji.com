@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Home, Zap, Code } from 'lucide-react';
+import { Home, Zap, Code, Star } from 'lucide-react';
 
 const CarbonCalculator = () => {
   // Username direkt olarak atanıyor
@@ -166,6 +166,13 @@ const CarbonCalculator = () => {
               >
                 <Zap className="w-4 h-4 sm:mr-2" />
                 <span className="hidden sm:inline">Karbon Ayakizi</span>
+              </Link>
+              <Link
+                to="/hotel-reviews"
+                className="flex items-center px-3 py-2 sm:px-6 sm:py-3 rounded-xl font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base"
+              >
+                <Star className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Otel Yorumları</span>
               </Link>
             </nav>
           </div>
