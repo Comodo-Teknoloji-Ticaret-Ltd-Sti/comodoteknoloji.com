@@ -1,30 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Home, Zap, Code, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { TrendingUp, Zap, Users, BarChart3, Calendar, Leaf, Award, Target, ArrowRight, Activity } from 'lucide-react';
 
-const CarbonCalculator = () => {
-  // Username direkt olarak atanıyor
-  const userName = "Furkan Ayakdaş";
-  
-  // Check if user is admin
-  const isAdmin = userName === "Furkan Ayakdaş" || userName === "Süreyya Armağan";
+const CarbonCalculator = ({ userName = "Furkan Ayakdaş" }) => {
+  // Hotel mapping
+  const hotelMapping = {
+    'GSR': 'İstanbul Otel',
+    'GKR': 'Kemer Otel',
+    'SDR': 'Lara Otel',
+    'SEK': 'Antalya Otel',
+    'SEL': 'Danimarka Otel',
+    'SPR': ' Premio Hotel',
+    'TBB': 'TUI  Belek'
+  };
 
-  // Determine hotel based on username
-  const hotelName = userName === "Furkan Ayakdaş" ? "Antalya Hotel" : 
-                   userName === "Süreyya Armağan" ? "Antalya Hotel" : 
-                   isAdmin ? "Admin Panel" :
-                   "Hotel Not Found";
-  
+  // Sabit misafir sayısı
+  const fixedGuestCount = 900;
+
+  // Hotel adı
+  const hotelName = "Antalya Otel";
+
   // Energy types with their corresponding units and kWh conversion factors
   const energyTypes = [
-    { value: "LPG", unit: "Lt", kwhFactor: 6.98 },
-    { value: "Elektrik", unit: "kWh", kwhFactor: 1 },
-    { value: "Su", unit: "m³", kwhFactor: 2.42 },
-    { value: "Kömür", unit: "Kg", kwhFactor: 7.89 },
-    { value: "Reşo", unit: "Adet", kwhFactor: 1.5 },
-    { value: "LNG", unit: "m³", kwhFactor: 10.55 },
-    { value: "Tüp", unit: "Adet", kwhFactor: 13.8 },
-    { value: "Doğalgaz", unit: "m³", kwhFactor: 10.64 }
+    { value: "LPG", unit: "Lt", kwhFactor: 6.98, icon: "🔥" },
+    { value: "Elektrik", unit: "kWh", kwhFactor: 1, icon: "⚡" },
+    { value: "Su", unit: "m³", kwhFactor: 2.42, icon: "💧" },
+    { value: "Kömür", unit: "Kg", kwhFactor: 7.89, icon: "⚫" },
+    { value: "Reşo", unit: "Adet", kwhFactor: 1.5, icon: "🔥" },
+    { value: "LNG", unit: "m³", kwhFactor: 10.55, icon: "🏭" },
+    { value: "Tüp", unit: "Adet", kwhFactor: 13.8, icon: "🔶" },
+    { value: "Doğalgaz", unit: "m³", kwhFactor: 10.64, icon: "🏢" }
   ];
 
   // State variables
@@ -34,16 +38,12 @@ const CarbonCalculator = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [totalKwh, setTotalKwh] = useState(0);
-  const [activeTab, setActiveTab] = useState(isAdmin ? 'allCalculations' : 'calculator');
-  
-  // Mock data için sabit misafir sayısı
-  const mockGuestCount = 150;
-  
-  // Get current hotel's guest count - sabit değer döndür
-  const getCurrentHotelGuests = () => {
-    return mockGuestCount;
-  };
-  
+  const [activeTab, setActiveTab] = useState('calculator');
+  const [stats, setStats] = useState(null);
+  const [reports, setReports] = useState([]);
+  const [allCalculations, setAllCalculations] = useState([]);
+  const [allConsumptions, setAllConsumptions] = useState([]);
+
   // Get unit and kWh factor for selected energy type
   const getSelectedEnergyTypeInfo = () => {
     return energyTypes.find(type => type.value === selectedEnergyType) || energyTypes[0];
@@ -76,11 +76,11 @@ const CarbonCalculator = () => {
   // Confirm adding consumption
   const confirmAddConsumption = () => {
     const energyTypeInfo = getSelectedEnergyTypeInfo();
-    
+
     if (editingItem) {
       // Update existing item
-      const updatedList = consumptionList.map(item => 
-        item.id === editingItem.id 
+      const updatedList = consumptionList.map(item =>
+        item.id === editingItem.id
           ? {
               ...item,
               type: selectedEnergyType,
@@ -103,7 +103,7 @@ const CarbonCalculator = () => {
       };
       setConsumptionList([...consumptionList, newEntry]);
     }
-    
+
     setConsumptionAmount("");
     setShowConfirmation(false);
   };
@@ -125,251 +125,687 @@ const CarbonCalculator = () => {
     setConsumptionList(consumptionList.filter(item => item.id !== id));
   };
 
-  // Handle saving all entries - sadece alert göster
-  const handleSave = async () => {
-    console.log('Kaydedilecek veri:', { userName, hotelName, totalKwh, consumptionList });
-    alert('Veriler başarıyla kaydedildi! (Demo mode)');
+  // Handle saving all entries (local only)
+  const handleSave = () => {
+    // Save to local state for demonstration
+    const saveData = {
+      id: Date.now(),
+      kullaniciAdi: userName,
+      hotelName: hotelName,
+      misafirSayisi: fixedGuestCount,
+      toplamKwh: totalKwh,
+      kisiBasinaEnerji: totalKwh / fixedGuestCount,
+      enerjiTuketimleri: consumptionList.map(item => ({
+        enerjiTuru: item.type,
+        miktar: item.amount,
+        birim: item.unit,
+        kwhDegeri: item.kwhEquivalent
+      })),
+      eklenmeTarihi: new Date().toISOString(),
+      tuketimSayisi: consumptionList.length
+    };
+    setReports([saveData, ...reports]);
+    setAllCalculations([saveData, ...allCalculations]);
+    setAllConsumptions([
+      ...allConsumptions,
+      ...consumptionList.map(item => ({
+        id: Date.now() + Math.random(),
+        hesaplamaId: saveData.id,
+        enerjiTuru: item.type,
+        miktar: item.amount,
+        birim: item.unit,
+        kwhDegeri: item.kwhEquivalent,
+        kullaniciAdi: userName
+      }))
+    ]);
+    
+    // Show success animation
+    const successDiv = document.createElement('div');
+    successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+    successDiv.innerHTML = '✅ Veriler başarıyla kaydedildi!';
+    document.body.appendChild(successDiv);
+    setTimeout(() => {
+      successDiv.remove();
+    }, 3000);
   };
 
+  // Stats calculation (local)
+  React.useEffect(() => {
+    if (reports.length > 0) {
+      const toplamKayitSayisi = reports.length;
+      const toplamKwh = reports.reduce((sum, r) => sum + r.toplamKwh, 0);
+      const ortalamaMisafirSayisi = fixedGuestCount;
+      const ortalamaKisiBasinaEnerji = toplamKwh / (toplamKayitSayisi * fixedGuestCount);
+      const sonKayitTarihi = reports[0].eklenmeTarihi;
+      // Enerji türü dağılımı
+      const enerjiTuruDagilimi = {};
+      reports.forEach(report => {
+        report.enerjiTuketimleri.forEach(item => {
+          if (!enerjiTuruDagilimi[item.enerjiTuru]) {
+            enerjiTuruDagilimi[item.enerjiTuru] = { adet: 0, toplamKwh: 0 };
+          }
+          enerjiTuruDagilimi[item.enerjiTuru].adet += 1;
+          enerjiTuruDagilimi[item.enerjiTuru].toplamKwh += item.kwhDegeri;
+        });
+      });
+      setStats({
+        toplamKayitSayisi,
+        toplamKwh,
+        ortalamaMisafirSayisi,
+        ortalamaKisiBasinaEnerji,
+        sonKayitTarihi,
+        enerjiTuruDagilimi: Object.entries(enerjiTuruDagilimi).map(([enerjiTuru, val]) => ({
+          enerjiTuru,
+          adet: val.adet,
+          toplamKwh: val.toplamKwh
+        }))
+      });
+    } else {
+      setStats(null);
+    }
+  }, [reports]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
-      <div className="fixed w-full z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 sm:h-20">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur opacity-75"></div>
-                <div className="relative bg-white text-white p-1 sm:p-2 rounded-xl">
-                  <img src="../ComodoTeknoloji.png" alt="Comodo Teknoloji" className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl" />
-                </div>
-              </div>
-              <div>
-                <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Comodo
-                </h1>
-                <p className="text-xs text-gray-500 -mt-1 hidden sm:block">Teknoloji</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header with gradient background */}
+        <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 rounded-2xl shadow-2xl p-8 mb-8 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 flex items-center">
+                <Leaf className="mr-3 h-10 w-10" />
+                Enerji Yönetim Sistemi
+              </h1>
+              <h2 className="text-2xl font-semibold text-blue-100">{hotelName}</h2>
+              <p className="text-lg text-blue-200 mt-2">👤 {userName}</p>
+            </div>
+            <div className="text-right">
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                <Award className="h-12 w-12 mx-auto mb-2 text-yellow-300" />
+                <p className="text-sm">Sürdürülebilirlik</p>
+                <p className="text-sm">Sertifikası</p>
               </div>
             </div>
+          </div>
+        </div>
 
-            <nav className="flex items-center space-x-2 sm:space-x-4">
-              <Link
-                to="/"
-                className="flex items-center px-3 py-2 sm:px-6 sm:py-3 rounded-xl font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base"
-              >
-                <Home className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Sayaç Okuma</span>
-              </Link>
-              <Link
-                to="/carbon-footprint"
-                className="flex items-center px-3 py-2 sm:px-6 sm:py-3 rounded-xl font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 transition-all duration-300 text-sm sm:text-base"
-              >
-                <Zap className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Karbon Ayakizi</span>
-              </Link>
-              <Link
-                to="/hotel-reviews"
-                className="flex items-center px-3 py-2 sm:px-6 sm:py-3 rounded-xl font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base"
-              >
-                <Star className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Otel Yorumları</span>
-              </Link>
+        {/* Tab Navigation with modern design */}
+        <div className="mb-8">
+          <div className="bg-white rounded-xl shadow-lg p-2">
+            <nav className="flex flex-wrap space-x-1">
+              {[
+                { key: 'calculator', label: 'Enerji Hesaplama', icon: Zap },
+                { key: 'stats', label: 'İstatistikler', icon: BarChart3 },
+                { key: 'reports', label: 'Raporlar', icon: TrendingUp },
+                { key: 'allCalculations', label: 'Tüm Hesaplamalar', icon: Activity },
+                { key: 'allConsumptions', label: 'Tüm Tüketimler', icon: Target }
+              ].map(({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(key)}
+                  className={`flex items-center py-3 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
+                    activeTab === key
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transform scale-105'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon className="h-4 w-4 mr-2" />
+                  {label}
+                </button>
+              ))}
             </nav>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="pt-20 sm:pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Hero Section */}
-        <div className="text-center mb-6 sm:mb-8">
-          <div className="inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-green-100 border border-green-200 text-xs sm:text-sm mb-4 sm:mb-6">
-            <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-green-600" />
-            <span className="text-green-700">Karbon Ayakizi Hesaplama</span>
-          </div>
-          <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6">
-            <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              Karbon Ayakizi
-            </span>
-            <br />
-            <span className="text-gray-900">Hesaplama Sistemi</span>
-          </h1>
-          <p className="text-sm sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
-            Otel işletmelerinde enerji tüketimi ve karbon ayakizi hesaplama sistemi.
-          </p>
-        </div>
+        {/* Calculator Tab */}
+        {activeTab === 'calculator' && (
+          <div className="space-y-8">
+            {/* Guest Information Card */}
+            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl shadow-xl p-8 text-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold mb-4 flex items-center">
+                    <Users className="mr-3 h-8 w-8" />
+                    Günlük Misafir Analizi
+                  </h3>
+                  <div className="flex items-center space-x-6">
+                    <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                      <p className="text-4xl font-bold">{fixedGuestCount}</p>
+                      <p className="text-lg">Aktif Misafir</p>
+                    </div>
+                    <ArrowRight className="h-8 w-8 text-white/60" />
+                    <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                      <p className="text-2xl font-bold">100%</p>
+                      <p className="text-lg">Doluluk Oranı</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                    <Calendar className="h-12 w-12 mx-auto mb-2" />
+                    <p className="text-sm">Bugün</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        {/* Calculator */}
-        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">{hotelName}</h2>
-            <p className="text-sm text-gray-600">Kullanıcı: {userName}</p>
-          </div>
-
-          {/* Daily Guests Information */}
-          <div className="mb-6">
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h3 className="text-lg font-semibold text-blue-800 mb-2">Bugünkü Misafir Sayısı</h3>
-              <p className="text-2xl font-bold text-blue-600">{getCurrentHotelGuests()} Kişi</p>
-            </div>
-          </div>
-
-          {/* Input section */}
-          <div className="flex flex-wrap mb-6 gap-4">
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-gray-700 mb-2 font-medium">
-                Tüketilen Enerji Türü:
-                <select
-                  value={selectedEnergyType}
-                  onChange={(e) => setSelectedEnergyType(e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 p-2 rounded-md"
-                >
-                  {energyTypes.map(type => (
-                    <option key={type.value} value={type.value}>
-                      {type.value}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-gray-700 mb-2 font-medium">
-                Tüketim Miktarı ({getSelectedEnergyTypeInfo().unit}):
-                <input
-                  type="number"
-                  value={consumptionAmount}
-                  onChange={(e) => setConsumptionAmount(e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 p-2 rounded-md"
-                />
-              </label>
-            </div>
-            
-            <div className="flex items-end">
-              <button
-                onClick={handleAddConsumption}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-              >
-                {editingItem ? 'Güncelle' : 'Ekle'}
-              </button>
-            </div>
-          </div>
-          
-          {/* Consumption list */}
-          {consumptionList.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-2">Eklenen Tüketimler</h3>
-              <div className="border rounded-md overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enerji Türü</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Miktar</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">kWh Değeri</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {consumptionList.map((item) => (
-                      <tr key={item.id}>
-                        <td className="px-4 py-2 whitespace-nowrap">{item.type}</td>
-                        <td className="px-4 py-2 whitespace-nowrap">{item.amount} {item.unit}</td>
-                        <td className="px-4 py-2 whitespace-nowrap">{item.kwhEquivalent.toFixed(2)} kWh</td>
-                        <td className="px-4 py-2 whitespace-nowrap space-x-2">
-                          <button 
-                            onClick={() => handleEdit(item)}
-                            className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
-                          >
-                            Düzenle
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(item.id)}
-                            className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
-                          >
-                            Sil
-                          </button>
-                        </td>
-                      </tr>
+            {/* Input section with modern design */}
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <Zap className="mr-3 h-6 w-6 text-blue-500" />
+                Enerji Tüketimi Girişi
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-gray-700 mb-3 font-semibold">
+                    Enerji Türü Seçin:
+                  </label>
+                  <select
+                    value={selectedEnergyType}
+                    onChange={(e) => setSelectedEnergyType(e.target.value)}
+                    className="w-full border-2 border-gray-200 p-4 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  >
+                    {energyTypes.map(type => (
+                      <option key={type.value} value={type.value}>
+                        {type.icon} {type.value}
+                      </option>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-              
-              {/* Total kWh */}
-              <div className="mt-4 p-4 bg-gray-50 rounded-md">
-                <p className="text-lg font-semibold">
-                  Toplam kWh Değeri: <span className="text-blue-600">{totalKwh.toFixed(2)} kWh</span>
-                </p>
-                <p className="text-md font-medium mt-2">
-                  Kişi Başına Enerji: <span className="text-green-600">{(totalKwh / getCurrentHotelGuests()).toFixed(2)} kWh/kişi</span>
-                </p>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 mb-3 font-semibold">
+                    Tüketim Miktarı ({getSelectedEnergyTypeInfo().unit}):
+                  </label>
+                  <input
+                    type="number"
+                    value={consumptionAmount}
+                    onChange={(e) => setConsumptionAmount(e.target.value)}
+                    placeholder="Miktar giriniz..."
+                    className="w-full border-2 border-gray-200 p-4 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  />
+                </div>
+
+                <div className="flex items-end">
+                  <button
+                    onClick={handleAddConsumption}
+                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg font-semibold"
+                  >
+                    {editingItem ? '✏️ Güncelle' : '➕ Ekle'}
+                  </button>
+                </div>
               </div>
             </div>
-          )}
-          
-          {/* Save button */}
-          {consumptionList.length > 0 && (
-            <button
-              onClick={handleSave}
-              className="mt-6 bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700"
-            >
-              Kaydet
-            </button>
-          )}
 
-          {/* Confirmation Modal */}
-          {showConfirmation && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
-                <h3 className="text-lg font-semibold mb-4">
-                  {editingItem ? 'Tüketimi Güncelle' : 'Tüketimi Ekle'}
+            {/* Consumption list with enhanced table */}
+            {consumptionList.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-xl p-8">
+                <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                  <Activity className="mr-3 h-6 w-6 text-green-500" />
+                  Eklenen Tüketimler
                 </h3>
-                <div className="mb-4">
-                  <p className="text-gray-600">
-                    <strong>Enerji Türü:</strong> {selectedEnergyType}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Miktar:</strong> {consumptionAmount} {getSelectedEnergyTypeInfo().unit}
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>kWh Değeri:</strong> {calculateKwh(selectedEnergyType, parseFloat(consumptionAmount) || 0).toFixed(2)} kWh
-                  </p>
+                <div className="overflow-hidden rounded-xl border border-gray-200">
+                  <table className="w-full">
+                    <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">
+                          Enerji Türü
+                        </th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">
+                          Miktar
+                        </th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">
+                          kWh Değeri
+                        </th>
+                        <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">
+                          İşlemler
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {consumptionList.map((item, index) => (
+                        <tr 
+                          key={item.id} 
+                          className={`hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <span className="text-2xl mr-3">
+                                {energyTypes.find(t => t.value === item.type)?.icon}
+                              </span>
+                              <span className="font-semibold text-gray-900">{item.type}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="text-lg font-medium text-gray-900">
+                              {item.amount.toLocaleString()} {item.unit}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                              ⚡ {item.kwhEquivalent.toLocaleString()} kWh
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap space-x-3">
+                            <button
+                              onClick={() => handleEdit(item)}
+                              className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors transform hover:scale-105"
+                            >
+                              ✏️ Düzenle
+                            </button>
+                            <button
+                              onClick={() => handleDelete(item.id)}
+                              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors transform hover:scale-105"
+                            >
+                              🗑️ Sil
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <div className="flex justify-end space-x-2">
+
+                {/* Total Summary */}
+                <div className="mt-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-2xl p-6 text-white">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center">
+                      <p className="text-3xl font-bold">{totalKwh.toLocaleString()}</p>
+                      <p className="text-lg">Toplam kWh</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-3xl font-bold">{(totalKwh / fixedGuestCount).toFixed(2)}</p>
+                      <p className="text-lg">kWh/Kişi</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-3xl font-bold">{consumptionList.length}</p>
+                      <p className="text-lg">Tüketim Kalemi</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Save Button */}
+                <div className="mt-6 text-center">
                   <button
-                    onClick={cancelConfirmation}
-                    className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                    onClick={handleSave}
+                    className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 shadow-lg font-bold text-lg"
                   >
-                    İptal
-                  </button>
-                  <button
-                    onClick={confirmAddConsumption}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  >
-                    {editingItem ? 'Güncelle' : 'Ekle'}
+                    💾 Verileri Kaydet
                   </button>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-      </div>
+            )}
+          </div>
+        )}
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-2 sm:p-3 rounded-xl">
-              <Code className="w-4 h-4 sm:w-6 sm:h-6" />
-            </div>
-            <div>
-              <h3 className="text-lg sm:text-2xl font-bold">Comodo Teknoloji</h3>
-              <p className="text-gray-400 text-xs sm:text-sm">Dijital Dönüşüm Partneri</p>
+        {/* Stats Tab */}
+        {activeTab === 'stats' && (
+          <div>
+            {stats ? (
+              <div className="space-y-8">
+                {/* Overview Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-xl">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-blue-100 text-sm font-medium">Toplam Kayıt</p>
+                        <p className="text-3xl font-bold">{stats.toplamKayitSayisi}</p>
+                      </div>
+                      <BarChart3 className="h-12 w-12 text-blue-200" />
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-xl">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-green-100 text-sm font-medium">Toplam kWh</p>
+                        <p className="text-3xl font-bold">{stats.toplamKwh.toLocaleString()}</p>
+                      </div>
+                      <Zap className="h-12 w-12 text-green-200" />
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-xl">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-purple-100 text-sm font-medium">Ortalama Misafir</p>
+                        <p className="text-3xl font-bold">{stats.ortalamaMisafirSayisi}</p>
+                      </div>
+                      <Users className="h-12 w-12 text-purple-200" />
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-xl">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-orange-100 text-sm font-medium">Kişi Başına Enerji</p>
+                        <p className="text-2xl font-bold">{stats.ortalamaKisiBasinaEnerji.toFixed(2)}</p>
+                        <p className="text-sm text-orange-200">kWh/kişi</p>
+                      </div>
+                      <Target className="h-12 w-12 text-orange-200" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Last Record Date */}
+                <div className="bg-white rounded-2xl shadow-xl p-8">
+                  <h4 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <Calendar className="mr-3 h-6 w-6 text-blue-500" />
+                    Son Kayıt Tarihi
+                  </h4>
+                  <p className="text-xl text-gray-600">
+                    {new Date(stats.sonKayitTarihi).toLocaleDateString('tr-TR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                </div>
+
+                {/* Energy Distribution */}
+                <div className="bg-white rounded-2xl shadow-xl p-8">
+                  <h4 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <BarChart3 className="mr-3 h-6 w-6 text-green-500" />
+                    Enerji Türü Dağılımı
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {stats.enerjiTuruDagilimi.map((item, index) => (
+                      <div key={index} className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="flex items-center mb-2">
+                              <span className="text-2xl mr-3">
+                                {energyTypes.find(t => t.value === item.enerjiTuru)?.icon}
+                              </span>
+                              <p className="font-bold text-gray-800 text-lg">{item.enerjiTuru}</p>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-1">{item.adet} kayıt</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-blue-600 text-xl">{item.toplamKwh.toLocaleString()}</p>
+                            <p className="text-sm text-gray-500">kWh</p>
+                            <p className="text-sm font-medium text-green-600">
+                              {((item.toplamKwh / stats.toplamKwh) * 100).toFixed(1)}%
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-4 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full"
+                            style={{ width: `${((item.toplamKwh / stats.toplamKwh) * 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
+                <BarChart3 className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+                <p className="text-xl text-gray-600">İstatistik verisi bulunamadı.</p>
+                <p className="text-gray-500 mt-2">Veri girişi yaptıktan sonra istatistikler görüntülenecektir.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Reports Tab */}
+        {activeTab === 'reports' && (
+          <div>
+            {reports.length > 0 ? (
+              <div className="space-y-6">
+                {reports.map((report, index) => (
+                  <div key={report.id} className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+                    <div className="flex justify-between items-start mb-6">
+                      <div>
+                        <h4 className="text-2xl font-bold text-gray-800 flex items-center">
+                          <TrendingUp className="mr-3 h-6 w-6 text-blue-500" />
+                          Rapor #{report.id}
+                        </h4>
+                        <p className="text-gray-600 mt-2 flex items-center">
+                          <Calendar className="mr-2 h-4 w-4" />
+                          {new Date(report.eklenmeTarihi).toLocaleDateString('tr-TR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                      <div className="text-right bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-xl">
+                        <p className="text-sm font-medium">Toplam Enerji</p>
+                        <p className="text-2xl font-bold">{report.toplamKwh.toLocaleString()} kWh</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                      <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                        <p className="text-sm font-medium text-blue-600">Kullanıcı</p>
+                        <p className="text-lg font-bold text-blue-800">{report.kullaniciAdi}</p>
+                      </div>
+                      <div className="bg-green-50 rounded-xl p-4 border border-green-100">
+                        <p className="text-sm font-medium text-green-600">Misafir Sayısı</p>
+                        <p className="text-lg font-bold text-green-800">{report.misafirSayisi}</p>
+                      </div>
+                      <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                        <p className="text-sm font-medium text-purple-600">Kişi Başına Enerji</p>
+                        <p className="text-lg font-bold text-purple-800">{report.kisiBasinaEnerji.toFixed(2)} kWh</p>
+                      </div>
+                      <div className="bg-orange-50 rounded-xl p-4 border border-orange-100">
+                        <p className="text-sm font-medium text-orange-600">Tüketim Sayısı</p>
+                        <p className="text-lg font-bold text-orange-800">{report.tuketimSayisi}</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-xl p-6">
+                      <h5 className="text-lg font-bold text-gray-800 mb-4">Enerji Tüketimleri</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {report.enerjiTuketimleri.map((item, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-4 border border-gray-200 flex items-center justify-between">
+                            <div className="flex items-center">
+                              <span className="text-2xl mr-3">
+                                {energyTypes.find(t => t.value === item.enerjiTuru)?.icon}
+                              </span>
+                              <div>
+                                <p className="font-semibold text-gray-800">{item.enerjiTuru}</p>
+                                <p className="text-sm text-gray-600">{item.miktar} {item.birim}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold text-green-600">{item.kwhDegeri.toLocaleString()}</p>
+                              <p className="text-xs text-gray-500">kWh</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
+                <TrendingUp className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+                <p className="text-xl text-gray-600">Henüz rapor bulunamadı.</p>
+                <p className="text-gray-500 mt-2">Veri girişi yaptıktan sonra raporlar görüntülenecektir.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* All Calculations Tab */}
+        {activeTab === 'allCalculations' && (
+          <div>
+            {allCalculations.length > 0 ? (
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
+                  <h3 className="text-2xl font-bold text-white flex items-center">
+                    <Activity className="mr-3 h-6 w-6" />
+                    Tüm Hesaplamalar
+                  </h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kullanıcı</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hotel</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Misafir Sayısı</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toplam kWh</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kişi Başına Enerji</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tüketim Sayısı</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {allCalculations.map((calc, index) => (
+                        <tr key={calc.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            #{calc.id}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {calc.kullaniciAdi}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {calc.hotelName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {calc.misafirSayisi}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                            {calc.toplamKwh.toLocaleString()} kWh
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {calc.kisiBasinaEnerji.toFixed(2)} kWh
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {calc.tuketimSayisi}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(calc.eklenmeTarihi).toLocaleDateString('tr-TR')}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
+                <Activity className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+                <p className="text-xl text-gray-600">Henüz hesaplama bulunamadı.</p>
+                <p className="text-gray-500 mt-2">Veri girişi yaptıktan sonra hesaplamalar görüntülenecektir.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* All Consumptions Tab */}
+        {activeTab === 'allConsumptions' && (
+          <div>
+            {allConsumptions.length > 0 ? (
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div className="bg-gradient-to-r from-green-500 to-blue-600 p-6">
+                  <h3 className="text-2xl font-bold text-white flex items-center">
+                    <Target className="mr-3 h-6 w-6" />
+                    Tüm Tüketimler
+                  </h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hesaplama ID</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kullanıcı</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enerji Türü</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Miktar</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Birim</th>
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">kWh Değeri</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {allConsumptions.map((consumption, index) => (
+                        <tr key={consumption.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            #{consumption.id.toString().slice(-6)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            #{consumption.hesaplamaId}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {consumption.kullaniciAdi}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <div className="flex items-center">
+                              <span className="text-lg mr-2">
+                                {energyTypes.find(t => t.value === consumption.enerjiTuru)?.icon}
+                              </span>
+                              {consumption.enerjiTuru}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {consumption.miktar.toLocaleString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {consumption.birim}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                            {consumption.kwhDegeri.toLocaleString()} kWh
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
+                <Target className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+                <p className="text-xl text-gray-600">Henüz tüketim bulunamadı.</p>
+                <p className="text-gray-500 mt-2">Veri girişi yaptıktan sonra tüketimler görüntülenecektir.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Confirmation Modal */}
+        {showConfirmation && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                {editingItem ? 'Güncelleme Onayı' : 'Ekleme Onayı'}
+              </h3>
+              <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                <p className="text-gray-700">
+                  <strong>Enerji Türü:</strong> {getSelectedEnergyTypeInfo().icon} {selectedEnergyType}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Miktar:</strong> {consumptionAmount} {getSelectedEnergyTypeInfo().unit}
+                </p>
+                <p className="text-gray-700">
+                  <strong>kWh Değeri:</strong> {calculateKwh(selectedEnergyType, parseFloat(consumptionAmount)).toLocaleString()} kWh
+                </p>
+              </div>
+              <div className="flex space-x-4">
+                <button
+                  onClick={confirmAddConsumption}
+                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 font-semibold"
+                >
+                  ✅ Onayla
+                </button>
+                <button
+                  onClick={cancelConfirmation}
+                  className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 font-semibold"
+                >
+                  ❌ İptal
+                </button>
+              </div>
             </div>
           </div>
-          <p className="text-gray-400 text-xs sm:text-base">&copy; 2025 Comodo Teknoloji. Tüm hakları saklıdır.</p>
-        </div>
-      </footer>
+        )}
+      </div>
     </div>
   );
 };
