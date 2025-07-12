@@ -4,6 +4,7 @@ import { HashRouter as Router, Routes, Route, Link, useNavigate } from 'react-ro
 import ElectricMeterReading from './ElectricMeterReading';
 import HotelReviewsAnalysis from './HotelReviewsAnalysis';
 import WebSites from './WebSites';
+import CarbonCalculate from './CarbonCalculate';
 
 const ComodoWebsite = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -1255,6 +1256,7 @@ const App = () => {
             <Routes>
                 {/* Geçici olarak sayaç sayfası ana sayfa olarak ayarlandı */}
                 <Route path="/" element={<ElectricMeterReading />} />
+                <Route path="/carbon-footprint" element={<CarbonCalculate />} />
                 <Route path="/home" element={<ComodoWebsite />} />
                 <Route path="/projects/electric-meter-reading" element={<ElectricMeterReading />} />
                 <Route path="/projects/hotel-reviews-analysis" element={<HotelReviewsAnalysis />} />

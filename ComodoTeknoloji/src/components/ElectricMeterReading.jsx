@@ -582,7 +582,14 @@ const Electric = () => {
                                 className="flex items-center px-3 py-2 sm:px-6 sm:py-3 rounded-xl font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base"
                             >
                                 <Home className="w-4 h-4 sm:mr-2" />
-                                <span className="hidden sm:inline">Ana Sayfa</span>
+                                <span className="hidden sm:inline">Sayaç Okuma</span>
+                            </Link>
+                            <Link
+                                to="/carbon-footprint"
+                                className="flex items-center px-3 py-2 sm:px-6 sm:py-3 rounded-xl font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 text-sm sm:text-base"
+                            >
+                                <Zap className="w-4 h-4 sm:mr-2" />
+                                <span className="hidden sm:inline">Karbon Ayakizi</span>
                             </Link>
                         </nav>
                     </div>
