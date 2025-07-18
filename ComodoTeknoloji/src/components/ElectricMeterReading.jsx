@@ -35,12 +35,13 @@ const Electric = () => {
     const [scrollY, setScrollY] = useState(0);
     
     // Date picker states - Varsayılan olarak haftalık veri gösterimi
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    // Default: Haziran 2025 verileri
+    const [selectedDate, setSelectedDate] = useState('2025-06-01');
     const [dateRange, setDateRange] = useState({
-        startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 gün önce
-        endDate: new Date().toISOString().split('T')[0] // bugün
+        startDate: '2025-06-01',
+        endDate: '2025-06-30'
     });
-    const [dateFilterType, setDateFilterType] = useState('range'); // Varsayılan olarak haftalık aralık
+    const [dateFilterType, setDateFilterType] = useState('range'); // Varsayılan olarak haziran ayı aralığı
 
     // AI Assistant States
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -169,6 +170,11 @@ const Electric = () => {
 
 
     useEffect(() => {
+        // Sayfa ilk açıldığında default olarak haziran ayı verileri yüklensin
+        setSelectedDate('2025-06-01');
+        setDateRange({ startDate: '2025-06-01', endDate: '2025-06-30' });
+        setDateFilterType('range');
+
         const fetchData = async () => {
             try {
                 setLoading(true);
